@@ -1,0 +1,14 @@
+--CREATE TABLES WITHOUT FOREIGN KEYS FIRST
+CREATE TABLE DEPARTMENT (
+    DepartmentName VARCHAR(255) NOT NULL,
+    ManagerID int NOT NULL,
+    CONSTRAINT DepartmentPK PRIMARY KEY (DepartmentName)
+);
+
+CREATE TABLE EMPLOYEE (
+    EmployeeID int NOT NULL IDENTITY(1,1),
+    ManagerID int NULL,
+    Salary NUMERIC(19,2) NOT NULL,
+    DepartmentName VARCHAR(255) NOT NULL,
+    CONSTRAINT EmployeePK PRIMARY KEY(EmployeeID)
+);
