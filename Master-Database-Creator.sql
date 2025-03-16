@@ -132,7 +132,7 @@ CREATE TABLE SERVICE_HISTORY(
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
     CONSTRAINT ResolutionStatusValidation CHECK
-        (Resolution_Status IN ('In progress','Resolved','Awating Service Worker','Blocked'))
+        (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
 );
 
 CREATE TABLE SPECIAL_SERVICE_HISTORY(
@@ -154,7 +154,7 @@ CREATE TABLE SPECIAL_SERVICE_HISTORY(
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
     CONSTRAINT SpecialServiceResolutionStatusValidation CHECK
-        (Resolution_Status IN ('In progress','Resolved','Awating Service Worker','Blocked'))
+        (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
 );
 
 -- Machine/Operator Junction Table
