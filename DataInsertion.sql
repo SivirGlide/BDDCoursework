@@ -31,4 +31,5 @@ UPDATE EMPLOYEE
 SET DepartmentName = 'Engineering'
 WHERE EmployeeID IN (9, 10);
 
-UPDATE EMPLOYEE SET Salary = 150000 WHERE EmployeeID = 1;
+EXECUTE ManagerPaysMore;
+

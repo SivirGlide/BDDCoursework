@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/OldSQL/EmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/OldSQL/OPERATOR_CERTIFICATION.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/OldSQL/UnionAndOperatorTable.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Views/EmployeeManagerPayProcedure.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/createdb.sql" dialect="TSQL" />
     <file url="PROJECT" dialect="TSQL" />
   </component>
