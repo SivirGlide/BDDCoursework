@@ -74,8 +74,8 @@ CREATE TABLE CERTIFICATION (
 CREATE TABLE OPERATOR_CERTIFICATION(
     Employee_id int NOT NULL,
     Certification_id int NOT NULL,
-    Date_awarded date,
-    expiry date,
+    Date_awarded DATE,
+    Expiry_Date AS DATEADD(YEAR, 2, Date_awarded),
 
     CONSTRAINT OperatorCertificationPK PRIMARY KEY (Employee_id,Certification_id),
     CONSTRAINT OperatorCertificationFKEmployee FOREIGN KEY (Employee_id)
@@ -261,14 +261,3 @@ CREATE TABLE PRODUCT_INSTANCE (
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 );
-
-
--- Machines must always be on
-
-
-
--- Certificate expiration == 2 years after awarded date.
-
-
-
--- Unless the machine is new, Service must be every 72 hours
