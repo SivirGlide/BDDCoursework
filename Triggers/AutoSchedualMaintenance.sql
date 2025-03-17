@@ -18,7 +18,7 @@ BEGIN
     END
 END;
 
---Test
+/* Testing
 
 INSERT INTO PRODUCTION_MACHINE (Department_name, Machine_Type, Purchase_Date, Is_Automatic, Maintenance_Status,Is_New)
 VALUES ('Engineering', 'Drill Press', '2023-01-15', 1, 'Operational',0);
@@ -28,3 +28,5 @@ SET Last_Maintenance_Date = GETDATE()
 WHERE Machine_id = 3;
 
 Select * from PRODUCTION_MACHINE;
+
+*/
