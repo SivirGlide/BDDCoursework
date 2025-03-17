@@ -1,7 +1,10 @@
 CREATE DATABASE LSBU_Manufacturing;
-go;
+GO
 
+USE LSBU_Manufacturing;
+GO
 -- Department and Employee Tables
+
 CREATE TABLE DEPARTMENT (
     DepartmentName VARCHAR(255) NOT NULL,
     ManagerID int NOT NULL,
@@ -12,14 +15,14 @@ CREATE TABLE EMPLOYEE (
     EmployeeID int NOT NULL IDENTITY(1,1),
     ManagerID int NULL,
     Salary NUMERIC(19,2) NOT NULL,
-    DepartmentName VARCHAR(255) NOT NULL,
+    DepartmentName VARCHAR(255) NULL,
     CONSTRAINT EmployeePK PRIMARY KEY(EmployeeID)
 );
 
 -- Add foreign keys to Department and Employee Tables
 
 ALTER TABLE DEPARTMENT
-ADD CONSTRAINT ManagerFK FOREIGN KEY (ManagerID)
+ADD CONSTRAINT ManagerFKEmployee FOREIGN KEY (ManagerID)
     REFERENCES EMPLOYEE(EmployeeID)
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
@@ -31,7 +34,7 @@ ADD CONSTRAINT ManagerREF FOREIGN KEY(ManagerID)
     ON DELETE NO ACTION;
 
 ALTER TABLE EMPLOYEE
-ADD CONSTRAINT DepartmentFK FOREIGN KEY(DepartmentName)
+ADD CONSTRAINT EmployeeFKDepartment FOREIGN KEY(DepartmentName)
     REFERENCES DEPARTMENT(DepartmentName)
     ON UPDATE CASCADE
     ON DELETE CASCADE;
@@ -49,12 +52,12 @@ CREATE TABLE UNIONTABLE (
 CREATE TABLE OPERATOR (
     EmployeeID int NOT NULL,
     UnionID int NOT NULL
-    CONSTRAINT OperatorFK FOREIGN KEY (UnionID)
+    CONSTRAINT OperatorFKUnion FOREIGN KEY (UnionID)
         REFERENCES UNIONTABLE(UnionID)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
     CONSTRAINT OperatorPK PRIMARY KEY (EmployeeID),
-    CONSTRAINT OperatorPKFK FOREIGN KEY (EmployeeID)
+    CONSTRAINT OperatorStrongPK FOREIGN KEY (EmployeeID)
         REFERENCES EMPLOYEE(EmployeeID)
             ON UPDATE CASCADE
             ON DELETE CASCADE
@@ -64,33 +67,26 @@ CREATE TABLE OPERATOR (
 
 CREATE TABLE CERTIFICATION (
     Certification_id int identity(1,1),
-    Name varchar NOT NULL
+    Name varchar(max) NOT NULL
     CONSTRAINT CertificationPK PRIMARY KEY (Certification_id)
 );
 
 CREATE TABLE OPERATOR_CERTIFICATION(
-    Employee_id int,
-    Certification_id int,
+    Employee_id int NOT NULL,
+    Certification_id int NOT NULL,
     Date_awarded date,
     expiry date,
-);
 
-ALTER TABLE OPERATOR_CERTIFICATION
-    ALTER COLUMN Employee_id int NOT NULL;
-
-ALTER TABLE OPERATOR_CERTIFICATION
-    ALTER COLUMN Certification_id int NOT NULL;
-
-ALTER TABLE OPERATOR_CERTIFICATION
-    ADD CONSTRAINT OCCPK PRIMARY KEY (Employee_id,Certification_id),
-    CONSTRAINT OCFK1 FOREIGN KEY (Employee_id)
+    CONSTRAINT OperatorCertificationPK PRIMARY KEY (Employee_id,Certification_id),
+    CONSTRAINT OperatorCertificationFKEmployee FOREIGN KEY (Employee_id)
         REFERENCES EMPLOYEE(EmployeeID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT OCFK2 FOREIGN KEY (Certification_id)
+    CONSTRAINT OperatorCertificationFKCertification FOREIGN KEY (Certification_id)
         REFERENCES CERTIFICATION(Certification_id)
             ON UPDATE CASCADE
-            ON DELETE CASCADE;
+            ON DELETE CASCADE
+);
 
 -- Create Production Machine
 
@@ -101,14 +97,14 @@ CREATE TABLE PRODUCTION_MACHINE (
     Purchase_Date DATE NOT NULL,
     -- find out how to make this a boolean
     Is_Automatic BIT NOT NULL,
-    -- constaint for specific statuses
+    -- constraint for specific statuses
     Maintenance_Status VARCHAR(255) NOT NULL,
-    Last_Maintenance_Date DATE NULL,
-    Nex_Schedualed_Maintenance Date NULL,
+    Last_Maintenance_Date DATETIME2 NULL,
+    Next_Scheduled_Maintenance DATETIME2 NULL,
     Is_New BIT DEFAULT 1
 
     CONSTRAINT MachinePK primary key (Machine_id),
-    CONSTRAINT MachineFK foreign key (Department_name)
+    CONSTRAINT MachineFKDepartment foreign key (Department_name)
         REFERENCES DEPARTMENT(DEPARTMENTNAME)
             ON UPDATE CASCADE
             ON DELETE SET DEFAULT,
@@ -121,47 +117,45 @@ CREATE TABLE PRODUCTION_MACHINE (
 CREATE TABLE SERVICE_HISTORY(
     Service_ID int identity(1,1),
     Machine_ID int NOT NULL,
-    Employee_ID int NULL,
+    Employee_ID int NULL default 'outsourced',
     Date_Of_Service DATETIME NOT NULL default getDate(),
     Service_Notes varchar(max) NULL,
     Resolution_Status Varchar(255) NOT NULL
 
     CONSTRAINT ServicePK PRIMARY KEY (Service_ID),
-    CONSTRAINT ServiceFK1 FOREIGN KEY (Machine_ID)
+    CONSTRAINT ServiceFKMachine FOREIGN KEY (Machine_ID)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON UPDATE CASCADE
             ON DELETE NO ACTION,
-    CONSTRAINT ServiceFK2 FOREIGN KEY (Employee_ID)
+    CONSTRAINT ServiceFKEmployee FOREIGN KEY (Employee_ID)
         REFERENCES  EMPLOYEE(EmployeeID)
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
     CONSTRAINT ResolutionStatusValidation CHECK
-        (Resolution_Status IN ('In progress','Resolved','Awating Service Worker','Blocked'))
+        (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
 );
 
 CREATE TABLE SPECIAL_SERVICE_HISTORY(
     Special_Service_ID int identity(1,1),
     Machine_ID int NOT NULL,
     Employee_ID int NULL,
-    Date_Of_Service DATETIME NOT NULL default getDate(),
+    --This MIGHT cause an error where 2 machines cant go into service on the same date, check back later...
+    Date_Of_Service DATE UNIQUE NOT NULL default getDate(),
     Service_Notes varchar(max) NULL,
     Resolution_Status Varchar(255) NOT NULL
 
     CONSTRAINT SpecialServicePK PRIMARY KEY (Special_Service_ID),
-    CONSTRAINT SpecialServiceFK1 FOREIGN KEY (Machine_ID)
+    CONSTRAINT SpecialServiceFKMachine FOREIGN KEY (Machine_ID)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON UPDATE CASCADE
             ON DELETE NO ACTION,
-    CONSTRAINT SpecialServiceFK2 FOREIGN KEY (Employee_ID)
+    CONSTRAINT SpecialServiceFKEmployee FOREIGN KEY (Employee_ID)
         REFERENCES  EMPLOYEE(EmployeeID)
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
     CONSTRAINT SpecialServiceResolutionStatusValidation CHECK
-        (Resolution_Status IN ('In progress','Resolved','Awating Service Worker','Blocked'))
+        (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
 );
-
-ALTER TABLE SPECIAL_SERVICE_HISTORY
-    ADD CONSTRAINT OneServicePerDay UNIQUE (Date_Of_Service);
 
 -- Machine/Operator Junction Table
 
@@ -172,12 +166,12 @@ CREATE TABLE PRODUCTION_MACHINE_OPERATOR (
     Shift_End DATETIME2 NOT NULL,
     Operator_Task varchar(max) NOT NULL
 
-    CONSTRAINT PMOCPK PRIMARY KEY (Shift_Date,Machine_id,Employee_id),
-    CONSTRAINT PMOFK1 FOREIGN KEY (Machine_id)
+    CONSTRAINT PRODUCTION_MACHINE_OPERATORCPK PRIMARY KEY (Shift_Date,Machine_id,Employee_id),
+    CONSTRAINT PRODUCTION_MACHINE_OPERATORFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
-    CONSTRAINT PMOFK2 FOREIGN KEY (Employee_id)
+    CONSTRAINT PRODUCTION_MACHINE_OPERATORFKEmployee FOREIGN KEY (Employee_id)
         REFERENCES EMPLOYEE (EmployeeID)
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
@@ -190,8 +184,8 @@ CREATE TABLE PRODUCT (
     Product_Number int identity(1,1),
     Description varchar(max) NULL,
     Production_Cost numeric(19,2) NOT NULL,
-    -- Sale price needs to be a function that takes production cost and * 1.45 iirc.
-    Sale_Price numeric(19,2) NOT NULL
+    -- PERSISTED Keyword stored the value instead of generating on query, takes up storage for faster querying
+    Sale_Price AS (Production_Cost * 1.45) PERSISTED
 
     CONSTRAINT ProductPK PRIMARY KEY (Product_Number),
 );
@@ -203,12 +197,12 @@ CREATE TABLE COMPONENTS_IN_PRODUCT(
     Component_Product_Number  int NOT NULL,
     Quantity int NOT NULL default 1
 
-    CONSTRAINT CIPCPK PRIMARY KEY (Assembly_Product_Number, Component_Product_Number),
-    CONSTRAINT CIPFK1 FOREIGN KEY (Assembly_Product_Number)
+    CONSTRAINT COMPONENTS_IN_PRODUCTCPK PRIMARY KEY (Assembly_Product_Number, Component_Product_Number),
+    CONSTRAINT COMPONENTS_IN_PRODUCTFKProduct1 FOREIGN KEY (Assembly_Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
-    CONSTRAINT CIPFK2 FOREIGN KEY (Component_Product_Number)
+    CONSTRAINT COMPONENTS_IN_PRODUCTFKProduct2 FOREIGN KEY (Component_Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
@@ -220,12 +214,12 @@ CREATE TABLE PRODUCTION_MACHINE_PRODUCT (
     Machine_id int NOT NULL,
     Product_Number int NOT NULL
 
-    CONSTRAINT PMPCPK PRIMARY KEY (Machine_id,Product_Number),
-    CONSTRAINT PMPFK1 FOREIGN KEY (Machine_id)
+    CONSTRAINT PRODUCTION_MACHINE_PRODUCTCPK PRIMARY KEY (Machine_id,Product_Number),
+    CONSTRAINT PRODUCTION_MACHINE_PRODUCTFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON UPDATE NO ACTION
             ON DELETE CASCADE,
-    CONSTRAINT PMPFK2 FOREIGN KEY (Product_Number)
+    CONSTRAINT PRODUCTION_MACHINE_PRODUCTFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON UPDATE NO ACTION
             ON DELETE CASCADE
@@ -241,11 +235,11 @@ CREATE TABLE PRODUCTION_PROCESS (
     Build_Time_In_Seconds numeric(19,0) NOT NULL
 
     CONSTRAINT ProductionProcessPK PRIMARY KEY (Process_id),
-    CONSTRAINT ProductionProcessFK1 FOREIGN KEY (Product_Number)
+    CONSTRAINT ProductionProcessFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
-    CONSTRAINT ProductionProcessFK2 FOREIGN KEY (Machine_id)
+    CONSTRAINT ProductionProcessFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
@@ -258,12 +252,93 @@ CREATE TABLE PRODUCT_INSTANCE (
     Manufacture_Date_Time DATETIME2 NOT NULL default getDate()
 
     CONSTRAINT ProductInstancePK PRIMARY KEY (Serial_Number),
-    CONSTRAINT ProductInstanceFK1 FOREIGN KEY (Product_Number)
+    CONSTRAINT ProductInstanceFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
-    CONSTRAINT ProductInstanceFK2 FOREIGN KEY (Machine_id)
+    CONSTRAINT ProductInstanceFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 );
+
+-- Minimum 3 employees per department Trigger
+
+CREATE TRIGGER trg_MinimumEmployeesPerDepartment
+ON EMPLOYEE
+AFTER UPDATE, DELETE
+AS
+BEGIN
+    -- Get affected departments from the current operation
+    DECLARE @AffectedDepartments TABLE (DepartmentName VARCHAR(255));
+
+    -- For updates, both old and new departments are affected
+    IF EXISTS (SELECT 1 FROM inserted)
+    BEGIN
+        INSERT INTO @AffectedDepartments
+        SELECT DepartmentName FROM inserted WHERE DepartmentName IS NOT NULL
+        UNION
+        SELECT DepartmentName FROM deleted WHERE DepartmentName IS NOT NULL;
+    END
+    ELSE
+    BEGIN
+        -- For deletes, only the departments employees were removed from
+        INSERT INTO @AffectedDepartments
+        SELECT DepartmentName FROM deleted WHERE DepartmentName IS NOT NULL;
+    END
+
+    -- Check if any affected department now has fewer than 3 employees
+    DECLARE @InvalidDepartments TABLE (DepartmentName VARCHAR(255));
+
+    INSERT INTO @InvalidDepartments
+    SELECT d.DepartmentName
+    FROM @AffectedDepartments a
+    JOIN DEPARTMENT d ON a.DepartmentName = d.DepartmentName
+    LEFT JOIN EMPLOYEE e ON d.DepartmentName = e.DepartmentName
+    GROUP BY d.DepartmentName
+    HAVING COUNT(e.EmployeeID) < 3;
+
+    -- If any affected departments violate the rule, roll back
+    IF EXISTS (SELECT 1 FROM @InvalidDepartments)
+    BEGIN
+        DECLARE @DeptList VARCHAR(MAX) = '';
+
+        SELECT @DeptList = @DeptList + DepartmentName + ', '
+        FROM @InvalidDepartments;
+
+        SET @DeptList = LEFT(@DeptList, LEN(@DeptList) - 1);
+
+        ROLLBACK TRANSACTION;
+        RAISERROR('Operation would result in fewer than 3 employees in department(s): %s. Transaction rolled back.', 16, 1, @DeptList);
+    END
+END;
+
+-- Machines must always be on
+
+
+-- Certificate expiration == 2 years after awarded date.
+
+
+-- Unless the machine is new, Service must be every 72 hours
+
+
+-- Manager must be paid more than employee
+
+CREATE TRIGGER trg_EmployeeSalaryCheck
+ON EMPLOYEE
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    -- Check if any employee's salary exceeds their manager's salary
+    -- Only check employees who have managers (excludes CEO/owner)
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        JOIN EMPLOYEE m ON i.ManagerID = m.EmployeeID
+        WHERE i.Salary >= m.Salary
+    )
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RAISERROR('Employees cannot earn more than or equal to their manager. Transaction rolled back.', 16, 1);
+    END
+END;
