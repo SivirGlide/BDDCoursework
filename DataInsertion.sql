@@ -1,6 +1,5 @@
--- Testing Minimum employee Trigger
+-- Create initial employees with unassigned departments
 
--- Create initial unassigned employees
 INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName)
 VALUES
 (NULL, 100000, NULL), -- Employee 1 (will be CEO/top manager)
@@ -14,22 +13,18 @@ VALUES
 (1, 76000, NULL),     -- Employee 9
 (1, 75000, NULL);     -- Employee 10
 
--- Now create departments (using the first employee as the manager for all)
+-- Creating Departments
+
 INSERT INTO DEPARTMENT (DepartmentName, ManagerID)
 VALUES
 ('Engineering', 1),
 ('Marketing', 1),
 ('HR', 1);
 
+-- Assigning Employees to Departments
+
 UPDATE EMPLOYEE SET DepartmentName = 'Engineering' WHERE EmployeeID IN (2, 3, 4, 5);
 UPDATE EMPLOYEE SET DepartmentName = 'Marketing' WHERE EmployeeID IN (6, 7, 8);
 UPDATE EMPLOYEE SET DepartmentName = 'HR' WHERE EmployeeID IN (9, 10, 1);
 
-SELECT * FROM EMPLOYEE
-
-UPDATE EMPLOYEE
-SET DepartmentName = 'Engineering'
-WHERE EmployeeID IN (9, 10);
-
-EXECUTE ManagerPaysMore;
 
