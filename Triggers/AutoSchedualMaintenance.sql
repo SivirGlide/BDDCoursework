@@ -27,4 +27,4 @@ UPDATE PRODUCTION_MACHINE
 SET Last_Maintenance_Date = GETDATE()
 WHERE Machine_id = 3;
 
-Select * from PRODUCTION_MACHINE
+Select * from PRODUCTION_MACHINE;
