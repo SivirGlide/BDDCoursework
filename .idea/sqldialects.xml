@@ -3,6 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/CreateDB.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Database-Creator.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/DatabaseQuerying.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Execute-Database.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/AlterEmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/EmployeeAndDepartment.sql" dialect="TSQL" />
