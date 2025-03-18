@@ -1,8 +1,3 @@
-CREATE DATABASE LSBU_Manufacturing;
-GO
-
-USE LSBU_Manufacturing;
-GO
 -- Department and Employee Tables
 
 CREATE TABLE DEPARTMENT (

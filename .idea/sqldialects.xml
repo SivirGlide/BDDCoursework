@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/DataInsertion.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/CreateDB.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Database-Creator.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Execute-Database.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/AlterEmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/EmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/OPERATOR_CERTIFICATION.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/UnionAndOperatorTable.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/Master-Database-Creator.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Procedures/EmployeeManagerPayProcedure.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/AutoSchedualMaintenance.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/MinimumEmployeesInDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Views/MaintenanceIssueView.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/data/DataInsertion.sql" dialect="TSQL" />
     <file url="PROJECT" dialect="TSQL" />
   </component>
 </project>

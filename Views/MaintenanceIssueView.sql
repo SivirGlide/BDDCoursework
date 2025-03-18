@@ -5,7 +5,7 @@ Where COUNT MachineID > 2
 Should be FULL JOIN because a machine may have only one or the other type of service and we need to display all of them
 */
 
-CREATE OR ALTER VIEW vw_FrequentlyServicedMachines AS
+CREATE VIEW FrequentlyServicedMachinesView AS
 SELECT
     pm.Machine_id,
     pm.Machine_Type,
