@@ -91,7 +91,3 @@ VALUES
     (5, NULL, '2023-02-10', 'Hardware upgrade', 'Resolved'),
     (5, NULL, '2023-03-15', 'Sensor replacement', 'Resolved'),
     (5, NULL, '2023-04-20', 'Network connectivity issue', 'Resolved');
-
-SELECT * FROM vw_FrequentlyServicedMachines;
-
-SELECT * from SERVICE_HISTORY

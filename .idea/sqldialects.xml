@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/CreateDB.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Database-Creator.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Execute-Database.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/AlterEmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/EmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/OPERATOR_CERTIFICATION.sql" dialect="TSQL" />
