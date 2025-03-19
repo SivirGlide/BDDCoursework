@@ -3,7 +3,7 @@ When a new file is created, ensure it is added to Exectute-Database.sql so it ca
 TO DO
 
 QUESTIONS
-4a, 4b, 4c ✅ and 4e
+4a ✅, 4b, 4c ✅ and 4e
 
  - Machines must always be on
  - Operator Certificate Expiration ✅

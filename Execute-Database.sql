@@ -44,7 +44,9 @@ GO
 
 -- Optional: Load test data
 PRINT 'Loading test data...';
-:r data/DataInsertion.sql
+GO
+-- :r data/DataInsertion.sql
+:r Views/testdata.sql
 GO
 
 PRINT 'Database setup complete!';

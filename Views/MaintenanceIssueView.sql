@@ -1,10 +1,3 @@
-/*
-Produce all the Records from Maintenance and special maintenance
-Where COUNT MachineID > 2
-
-Should be FULL JOIN because a machine may have only one or the other type of service and we need to display all of them
-*/
-
 CREATE VIEW FrequentlyServicedMachinesView AS
 SELECT
     pm.Machine_id,
