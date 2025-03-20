@@ -12,8 +12,11 @@ EXECUTE OperatorShiftCountProcedure 1
 
 Select * from FrequentlyServicedMachinesView
 
--- Question 4D - Procedure that forces a manager to have a salary higher than their employee
+-- Question 4D
 
-EXECUTE ManagerPaysMore;
+--Manager cannot have pay lower than employee.
+EXECUTE ManagerPaysMore 100, 1000;
+--Employee Cannot have pay lower than manager.
+Execute ManagerPaysMore 1000000, 100000;
 
 -- Question 4E
