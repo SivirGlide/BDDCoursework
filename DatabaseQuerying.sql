@@ -3,10 +3,9 @@ GO
 
 -- Question 4A
 
-
+EXECUTE OperatorShiftCountProcedure 1
 
 -- Question 4B
-
 
 
 -- Question 4C

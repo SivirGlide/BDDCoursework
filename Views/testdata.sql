@@ -132,6 +132,7 @@ VALUES
 ('2025-03-02 08:00:00', 1, 4, '2025-03-02 16:00:00', 'CNC operation and maintenance'),
 ('2025-03-03 08:00:00', 2, 4, '2025-03-03 16:00:00', 'Laser cutting operations'),
 ('2025-03-04 08:00:00', 2, 4, '2025-03-04 16:00:00', 'Laser cutting operations'),
+('2025-03-05 08:00:00', 2, 4, '2025-03-05 16:00:00', 'Laser cutting operations'),
 ('2025-03-01 08:00:00', 3, 5, '2025-03-01 16:00:00', 'Assembly line oversight'),
 ('2025-03-02 08:00:00', 3, 6, '2025-03-02 16:00:00', 'Assembly line operation'),
 ('2025-03-03 08:00:00', 3, 7, '2025-03-03 16:00:00', 'Assembly line operation'),
@@ -140,7 +141,10 @@ VALUES
 ('2025-03-06 08:00:00', 4, 7, '2025-03-06 16:00:00', 'Packaging system operation'),
 ('2025-03-07 08:00:00', 5, 5, '2025-03-07 16:00:00', 'Testing apparatus setup'),
 ('2025-03-08 08:00:00', 5, 6, '2025-03-08 16:00:00', 'Testing apparatus operation'),
+('2025-03-10 08:00:00', 5, 6, '2025-03-10 16:00:00', 'Testing apparatus operation'),
 ('2025-03-09 08:00:00', 5, 7, '2025-03-09 16:00:00', 'Testing apparatus operation');
+
+
 
 -- Create products
 INSERT INTO PRODUCT (Description, Production_Cost)
