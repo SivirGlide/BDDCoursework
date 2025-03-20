@@ -42,11 +42,13 @@ GO
 :r Procedures/EmployeeManagerPayProcedure.sql
 GO
 
+:r Procedures/OperatorShiftCountView.sql
+
 -- Optional: Load test data
 PRINT 'Loading test data...';
 GO
 -- :r data/DataInsertion.sql
-:r Views/testdata.sql
+-- :r Views/testdata.sql
 GO
 
 PRINT 'Database setup complete!';

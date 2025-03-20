@@ -204,3 +204,174 @@ VALUES
 (5, 3, '2025-03-03 13:45:00'),
 (5, 4, '2025-03-03 16:30:00');
 
+------------------------------
+
+-- Updated test data script compatible with database triggers
+
+-- Step 1: Create 4 employees with different salary levels
+-- Note: We need at least 3 employees per department to satisfy the MinimumEmployeesPerDepartment trigger
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName)
+VALUES
+(NULL, 100000.00, NULL), -- Employee 1: Top manager
+(NULL, 80000.00, NULL),  -- Employee 2
+(NULL, 65000.00, NULL),  -- Employee 3
+(NULL, 55000.00, NULL);  -- Employee 4
+
+-- Step 2: Set up the management hierarchy (ensuring managers earn more than employees)
+UPDATE EMPLOYEE
+SET ManagerID = 1
+WHERE EmployeeID IN (2, 3);
+
+UPDATE EMPLOYEE
+SET ManagerID = 2
+WHERE EmployeeID = 4;
+
+-- Step 3: Create a department with the manager
+INSERT INTO DEPARTMENT (DepartmentName, ManagerID)
+VALUES ('Manufacturing', 1);
+
+-- Step 4: Assign employees to the department (ensuring at least 3 employees)
+UPDATE EMPLOYEE
+SET DepartmentName = 'Manufacturing'
+WHERE EmployeeID IN (1, 2, 3, 4);
+
+-- Step 5: Create machines (note: we'll handle Last_Maintenance_Date carefully due to the trigger)
+INSERT INTO PRODUCTION_MACHINE (Department_name, Machine_Type, Purchase_Date, Is_Automatic, Maintenance_Status, Is_New)
+VALUES
+('Manufacturing', 'Milling Machine', '2023-01-15', 1, 'Operational', 0),
+('Manufacturing', 'CNC Lathe', '2022-06-20', 1, 'Operational', 0),
+('Manufacturing', 'Press', '2021-09-10', 0, 'Operational', 0);
+
+-- Step 6: Set Last_Maintenance_Date for each machine (trigger will auto-set Next_Scheduled_Maintenance)
+UPDATE PRODUCTION_MACHINE
+SET Last_Maintenance_Date = DATEADD(day, -10, GETDATE())
+WHERE Machine_id = 1;
+
+UPDATE PRODUCTION_MACHINE
+SET Last_Maintenance_Date = DATEADD(day, -15, GETDATE())
+WHERE Machine_id = 2;
+
+UPDATE PRODUCTION_MACHINE
+SET Last_Maintenance_Date = DATEADD(day, -5, GETDATE())
+WHERE Machine_id = 3;
+
+-- Step 7: Create products
+INSERT INTO PRODUCT (Description, Production_Cost)
+VALUES
+('Flywheel', 120.50),
+('Clutch plate', 85.75),
+('Pressure plate', 95.25),
+('Bearing', 45.00),
+('Gear shaft', 65.30);
+
+-- Step 8: Link products to machines that can produce them
+INSERT INTO PRODUCTION_MACHINE_PRODUCT (Machine_id, Product_Number)
+VALUES
+(1, 1), -- Machine 1 can produce Flywheel
+(1, 3), -- Machine 1 can produce Pressure plate
+(2, 1), -- Machine 2 can produce Flywheel
+(2, 2), -- Machine 2 can produce Clutch plate
+(2, 4), -- Machine 2 can produce Bearing
+(3, 2), -- Machine 3 can produce Clutch plate
+(3, 3), -- Machine 3 can produce Pressure plate
+(3, 1), -- Machine 3 can produce Flywheel
+(1, 5); -- Machine 1 can produce Gear shaft
+
+-- Step 9: Create product instances (production records)
+-- Current date for reference in the script
+DECLARE @CurrentDate DATETIME2 = GETDATE();
+
+-- Today
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(1, 1, @CurrentDate),  -- Flywheel on Machine 1 today
+(2, 2, @CurrentDate);  -- Clutch plate on Machine 2 today
+
+-- Yesterday
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(3, 1, DATEADD(day, -1, @CurrentDate)),  -- Pressure plate on Machine 1 yesterday
+(2, 3, DATEADD(day, -1, @CurrentDate)),  -- Clutch plate on Machine 3 yesterday
+(4, 2, DATEADD(day, -1, @CurrentDate));  -- Bearing (not in criteria) on Machine 2 yesterday
+
+-- 2 days ago
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(1, 2, DATEADD(day, -2, @CurrentDate)),  -- Flywheel on Machine 2 two days ago
+(3, 3, DATEADD(day, -2, @CurrentDate));  -- Pressure plate on Machine 3 two days ago
+
+-- 4 days ago (outside our 3-day window)
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(1, 3, DATEADD(day, -4, @CurrentDate)),  -- Flywheel on Machine 3 four days ago (should NOT appear in results)
+(5, 1, DATEADD(day, -4, @CurrentDate));  -- Gear shaft on Machine 1 four days ago (should NOT appear in results)
+
+---------------
+
+-- Additional test data with component relationships
+
+-- Add some assembly products that use our components
+INSERT INTO PRODUCT (Description, Production_Cost)
+VALUES
+('Clutch Assembly', 350.75),      -- Product 6: An assembly that uses multiple components
+('Drivetrain Assembly', 850.25),  -- Product 7: A larger assembly
+('Transmission Kit', 1250.50);    -- Product 8: A complete kit
+
+-- Define the component relationships (which products are made up of which components)
+-- Clutch Assembly components
+INSERT INTO COMPONENTS_IN_PRODUCT (Assembly_Product_Number, Component_Product_Number, Quantity)
+VALUES
+(6, 2, 1),  -- 1 Clutch plate in a Clutch Assembly
+(6, 3, 1);  -- 1 Pressure plate in a Clutch Assembly
+
+-- Drivetrain Assembly components
+INSERT INTO COMPONENTS_IN_PRODUCT (Assembly_Product_Number, Component_Product_Number, Quantity)
+VALUES
+(7, 1, 1),  -- 1 Flywheel in a Drivetrain Assembly
+(7, 6, 1),  -- 1 Clutch Assembly in a Drivetrain Assembly
+(7, 4, 2);  -- 2 Bearings in a Drivetrain Assembly
+
+-- Transmission Kit components
+INSERT INTO COMPONENTS_IN_PRODUCT (Assembly_Product_Number, Component_Product_Number, Quantity)
+VALUES
+(8, 7, 1),  -- 1 Drivetrain Assembly in a Transmission Kit
+(8, 5, 3);  -- 3 Gear shafts in a Transmission Kit
+
+-- Link the new assembly products to machines
+INSERT INTO PRODUCTION_MACHINE_PRODUCT (Machine_id, Product_Number)
+VALUES
+(1, 6),  -- Machine 1 can produce Clutch Assembly
+(2, 7),  -- Machine 2 can produce Drivetrain Assembly
+(3, 8);  -- Machine 3 can produce Transmission Kit
+
+-- Add production instances for these assemblies
+DECLARE @CurrentDate DATETIME2 = GETDATE();
+
+-- Today - Machine 1 produced a Clutch Assembly
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES (6, 1, @CurrentDate);
+
+-- Yesterday - Machine 2 produced a Drivetrain Assembly
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES (7, 2, DATEADD(day, -1, @CurrentDate));
+
+-- 2 days ago - Machine 3 produced a Transmission Kit
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES (8, 3, DATEADD(day, -2, @CurrentDate));
+
+-- Add some more component production (focusing on our search criteria components)
+-- Today
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(3, 3, @CurrentDate);  -- Pressure plate on Machine 3 today
+
+-- Yesterday
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(1, 3, DATEADD(day, -1, @CurrentDate));  -- Flywheel on Machine 3 yesterday
+
+-- 3 days ago (still within our search window)
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+(2, 1, DATEADD(day, -3, @CurrentDate)),  -- Clutch plate on Machine 1 three days ago
+(3, 2, DATEADD(day, -3, @CurrentDate));  -- Pressure plate on Machine 2 three days ago
