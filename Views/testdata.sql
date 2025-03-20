@@ -111,6 +111,10 @@ VALUES
 (3, 5, '2025-02-09', 'Conveyor system overhaul', 'Resolved'),
 (4, 6, '2025-02-12', 'Full system diagnostic', 'Resolved');
 
+INSERT INTO SPECIAL_SERVICE_HISTORY
+(Machine_ID, Employee_ID, Date_Of_Service, Service_Notes, Resolution_Status)
+VALUES (4, 6, '2025-02-13', 'Full system diagnostic', 'Resolved');
+
 -- Create operator shifts data
 INSERT INTO PRODUCTION_MACHINE_OPERATOR
 (Shift_Date, Machine_id, Employee_id, Shift_End, Operator_Task)

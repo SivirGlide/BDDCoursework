@@ -10,7 +10,7 @@ EXECUTE OperatorShiftCountProcedure 1
 
 -- Question 4C
 
-Select * from FrequentlyServicedMachinesView
+EXECUTE FindMachinesWithHighMaintenanceRecords 4;
 
 -- Question 4D
 
