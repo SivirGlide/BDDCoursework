@@ -38,7 +38,7 @@ GO
 GO
 :r Views/MachinesToMakeProductView.sql
 GO
-:r Views/OperatorShifts.sql
+:r Views/OperatorShiftsProcedure.sql
 GO
 -- Create stored procedures
 
@@ -46,7 +46,7 @@ PRINT 'Creating stored procedures...';
 GO
 :r Procedures/ManagerPaysMoreProof.sql
 GO
-:r Procedures/OperatorShifts.sql
+:r Procedures/OperatorShiftsProcedure.sql
 GO
 :r Procedures/MonthlySalaryReport.sql
 GO

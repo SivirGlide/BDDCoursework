@@ -3,7 +3,7 @@ GO
 
 -- Question 4A
 
-EXECUTE OperatorShiftCountProcedure 1
+EXECUTE Improvedshiftcountprocedure 1
 
 -- Question 4B
 

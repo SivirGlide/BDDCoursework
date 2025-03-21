@@ -1,3 +1,4 @@
-CREATE OR ALTER View OperatorShiftCount AS
+CREATE OR ALTER View AllOperatorShifts AS
     SELECT Employee_id, Shift_Date
     From PRODUCTION_MACHINE_OPERATOR
+

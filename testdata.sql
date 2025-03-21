@@ -345,7 +345,6 @@ VALUES
 (3, 8);  -- Machine 3 can produce Transmission Kit
 
 -- Add production instances for these assemblies
-DECLARE @CurrentDate DATETIME2 = GETDATE();
 
 -- Today - Machine 1 produced a Clutch Assembly
 INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
