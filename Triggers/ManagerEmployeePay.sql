@@ -1,8 +1,3 @@
--- Manager must be paid more than employee
-
-Use LSBU_Manufacturing
-GO
-
 Create TRIGGER trg_EmployeeSalaryCheck
 ON EMPLOYEE
 AFTER INSERT, UPDATE

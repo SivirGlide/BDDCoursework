@@ -7,6 +7,10 @@ EXECUTE OperatorShiftCountProcedure 1
 
 -- Question 4B
 
+SELECT *
+from ProductsMadeByMachines
+ORDER BY
+    Machine_id,Manufacture_Date_Time
 
 -- Question 4C
 
@@ -20,3 +24,5 @@ EXECUTE ManagerPaysMore 100, 1000;
 Execute ManagerPaysMore 1000000, 100000;
 
 -- Question 4E
+
+Execute DepartmentSalaryReport

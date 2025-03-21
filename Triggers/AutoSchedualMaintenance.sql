@@ -1,6 +1,3 @@
-USE LSBU_Manufacturing
-GO
-
 CREATE TRIGGER trg_ScheduleNextMaintenance
 ON PRODUCTION_MACHINE
 AFTER UPDATE

@@ -1,8 +1,3 @@
-CREATE OR ALTER View OperatorShiftCount AS
-    SELECT Employee_id, Shift_Date
-    From PRODUCTION_MACHINE_OPERATOR
-
-GO
 CREATE OR ALTER PROCEDURE OperatorShiftCountProcedure @MonthIncriment INT
     --Specify how many months you want to go back
 AS
