@@ -1,7 +1,6 @@
 -- Master setup script to initialize the entire database
 
 PRINT 'Starting database setup...';
-
 -- Create the database
 
 PRINT 'Creating database...';
@@ -40,7 +39,7 @@ GO
 :r Views/MachinesToMakeProductView.sql
 GO
 :r Views/OperatorShifts.sql
-
+GO
 -- Create stored procedures
 
 PRINT 'Creating stored procedures...';
@@ -50,7 +49,7 @@ GO
 :r Procedures/OperatorShifts.sql
 GO
 :r Procedures/MonthlySalaryReport.sql
-
+GO
 -- Optional: Load test data
 PRINT 'Loading test data...';
 GO
