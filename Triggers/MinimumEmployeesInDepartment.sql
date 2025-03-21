@@ -1,6 +1,3 @@
-Use LSBU_Manufacturing
-GO
-
 -- Minimum 3 employees per department Trigger
 
 CREATE TRIGGER trg_MinimumEmployeesPerDepartment

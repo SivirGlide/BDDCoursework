@@ -1,5 +1,5 @@
 
-
+Create view ProductsMadeByMachines as
 -- Query to find all machines that have produced Flywheel, Clutch plate, or Pressure plate in the past 3 days
 SELECT
     PM.Machine_id,
@@ -18,5 +18,3 @@ WHERE
     P.Description IN ('Flywheel', 'Clutch plate', 'Pressure plate')
     -- Filter for products manufactured in the last 3 days
     AND PI.Manufacture_Date_Time >= DATEADD(day, -3, GETDATE())
-ORDER BY
-    PM.Machine_id, PI.Manufacture_Date_Time
