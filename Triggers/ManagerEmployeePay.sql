@@ -8,7 +8,7 @@ BEGIN
         SELECT 1
         FROM inserted i
         JOIN EMPLOYEE m ON i.ManagerID = m.EmployeeID
-        WHERE i.Salary >= m.Salary
+        WHERE i.Salary > m.Salary
     )
     BEGIN
         ROLLBACK TRANSACTION;
@@ -21,7 +21,7 @@ BEGIN
         SELECT 1
         FROM inserted i
         JOIN EMPLOYEE e ON e.ManagerID = i.EmployeeID
-        WHERE e.Salary >= i.Salary
+        WHERE e.Salary > i.Salary
     )
     BEGIN
         ROLLBACK TRANSACTION;

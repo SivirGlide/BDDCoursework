@@ -11,10 +11,15 @@ CREATE TABLE EMPLOYEE (
     ManagerID int NULL,
     Salary NUMERIC(19,2) NOT NULL,
     DepartmentName VARCHAR(255) NULL,
+    MonthlySalary as Salary/12,
+    StartDate DATE NOT NULL DEFAULT GETDATE(),
+    EndDate DATE NULL --default assumes still employed
     CONSTRAINT EmployeePK PRIMARY KEY(EmployeeID)
 );
 
 -- Add foreign keys to Department and Employee Tables
+
+
 
 ALTER TABLE DEPARTMENT
 ADD CONSTRAINT ManagerFKEmployee FOREIGN KEY (ManagerID)
