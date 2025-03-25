@@ -11,8 +11,6 @@ as
             end
         else if @PeriodType = 'Week' and @PeriodNumber between 1 and 52
             begin
-                --write week code
-
                 -- Find first day of the year
                 DECLARE @FirstDayOfYear DATE = DATEFROMPARTS(@Year, 1, 1)
 

@@ -1,12 +1,9 @@
 When a new file is created, ensure it is added to Exectute-Database.sql so it can be executed in the terminal
 
-TO DO
+QOL
 
-QUESTIONS
-4a ✅, 4b ✅, 4c ✅ and 4e✅
-
- - Machines must always be on
- - Operator Certificate Expiration ✅
- - FIX THE REFERENCING ON FOREIGN KEYS (the on update and deletes are really scuffed right now)
- - Write Master Script to execute everything from one script ✅
  - Change Operator Shift count to take in a date range instead
+ - add data
+ - fix foreign key references.
+ - make all procedures pull data from views
+ - execute database script needs to run each script.
