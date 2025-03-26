@@ -1,5 +1,8 @@
 -- Master setup script to initialize the entire database
 
+--Drop the original database
+DROP DATABASE LSBU_Manufacturing;
+
 PRINT 'Starting database setup...';
 -- Create the database
 
@@ -38,7 +41,7 @@ GO
 GO
 :r Views/MachinesToMakeProductView.sql
 GO
-:r Views/OperatorShiftsProcedure.sql
+:r Views/OperatorShiftsView.sql
 GO
 -- Create stored procedures
 
@@ -53,6 +56,7 @@ GO
 -- Optional: Load test data
 PRINT 'Loading test data...';
 GO
+:r ClaudeTestData.sql
 -- LOAD THE TEST DATA HERE
 
 PRINT 'Database setup complete!';

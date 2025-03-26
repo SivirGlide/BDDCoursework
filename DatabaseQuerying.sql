@@ -3,7 +3,10 @@ GO
 
 -- Question 4A
 
-EXECUTE Improvedshiftcountprocedure 1
+EXECUTE Improvedshiftcountprocedure 14
+
+    SELECT Employee_id, Shift_Date
+    From PRODUCTION_MACHINE_OPERATOR
 
 -- Question 4B
 
@@ -14,15 +17,15 @@ Machine_id,Manufacture_Date_Time
 
 -- Question 4C
 
-EXECUTE FindMachinesWithHighMaintenanceRecords 6;
+EXECUTE FindMachinesWithHighMaintenanceRecords 2;
 
 -- Question 4D
 
 --Manager cannot have pay lower than employee.
-EXECUTE ManagerPaysMore 100, 100000;
+EXECUTE ManagerPaysMore 99998, 99999;
 --Employee Cannot have pay lower than manager.
-Execute ManagerPaysMore 1000000, 10000000;
+Execute ManagerPaysMore 100000, 1000000;
 
 -- Question 4E
 
-Execute DepartmentSalaryReport'Month', 3, 2025
+Execute DepartmentSalaryReport'quarter', 3, 2024
