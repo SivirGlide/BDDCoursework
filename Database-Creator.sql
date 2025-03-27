@@ -205,7 +205,7 @@ CREATE TABLE COMPONENTS_IN_PRODUCT(
     CONSTRAINT COMPONENTS_IN_PRODUCTFKProduct2 FOREIGN KEY (Component_Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
-            ON UPDATE no action 
+            ON UPDATE no action
 );
 
 -- Product/Machine Junction Tables

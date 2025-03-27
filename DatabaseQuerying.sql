@@ -28,4 +28,4 @@ Execute ManagerPaysMore 100000, 1000000;
 
 -- Question 4E
 
-Execute DepartmentSalaryReport'quarter', 3, 2024
+Execute DepartmentSalaryReport'month', 10, 2025

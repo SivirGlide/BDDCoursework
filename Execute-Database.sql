@@ -43,6 +43,8 @@ GO
 GO
 :r Views/OperatorShiftsView.sql
 GO
+:r Views/SalaryReportView.sql
+GO
 -- Create stored procedures
 
 PRINT 'Creating stored procedures...';
@@ -51,7 +53,7 @@ GO
 GO
 :r Procedures/OperatorShiftsProcedure.sql
 GO
-:r Procedures/MonthlySalaryReport.sql
+:r Procedures/DepartmentSalaryReport.sql
 GO
 -- Optional: Load test data
 PRINT 'Loading test data...';

@@ -8,10 +8,11 @@
     <file url="file://$PROJECT_DIR$/Execute-Database.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/AlterEmployeeAndDepartment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/EmployeeAndDepartment.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/LegacySQL/MonthlySalaryReport.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/OPERATOR_CERTIFICATION.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/LegacySQL/UnionAndOperatorTable.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Procedures/DepartmentSalaryReport.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Procedures/ManagerPaysMoreProof.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/Procedures/MonthlySalaryReport.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Procedures/OperatorShiftsProcedure.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/AutoSchedualMaintenance.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/ManagerEmployeePay.sql" dialect="TSQL" />
@@ -19,6 +20,7 @@
     <file url="file://$PROJECT_DIR$/Views/MachinesToMakeProductView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Views/MaintenanceIssueView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Views/OperatorShiftsView.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Views/SalaryReportView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/data/DataInsertion.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/testdata.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/../../tutorials/QueryPractice/CapeCoddCDB.sql" dialect="TSQL" />
