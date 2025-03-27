@@ -10,7 +10,7 @@ CREATE TABLE EMPLOYEE (
     EmployeeID int NOT NULL IDENTITY(1,1),
     ManagerID int NULL,
     Salary NUMERIC(19,2) NOT NULL,
-    DepartmentName VARCHAR(255) NULL,
+    DepartmentName VARCHAR(255) default 'Unassigned',
     MonthlySalary as Salary/12,
     StartDate DATE NOT NULL DEFAULT GETDATE(),
     EndDate DATE NULL --default assumes still employed
@@ -24,7 +24,7 @@ CREATE TABLE EMPLOYEE (
 ALTER TABLE DEPARTMENT
 ADD CONSTRAINT ManagerFKEmployee FOREIGN KEY (ManagerID)
     REFERENCES EMPLOYEE(EmployeeID)
-    ON UPDATE NO ACTION
+    ON UPDATE cascade
     ON DELETE NO ACTION;
 
 ALTER TABLE EMPLOYEE
@@ -36,8 +36,8 @@ ADD CONSTRAINT ManagerREF FOREIGN KEY(ManagerID)
 ALTER TABLE EMPLOYEE
 ADD CONSTRAINT EmployeeFKDepartment FOREIGN KEY(DepartmentName)
     REFERENCES DEPARTMENT(DepartmentName)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE;
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
 
 -- Union Table
 
@@ -54,13 +54,13 @@ CREATE TABLE OPERATOR (
     UnionID int NOT NULL
     CONSTRAINT OperatorFKUnion FOREIGN KEY (UnionID)
         REFERENCES UNIONTABLE(UnionID)
-            ON DELETE CASCADE
+            ON DELETE no action
             ON UPDATE CASCADE,
     CONSTRAINT OperatorPK PRIMARY KEY (EmployeeID),
     CONSTRAINT OperatorStrongPK FOREIGN KEY (EmployeeID)
         REFERENCES EMPLOYEE(EmployeeID)
             ON UPDATE CASCADE
-            ON DELETE CASCADE
+            ON DELETE cascade
 );
 
 -- Create and Alter Certification table and Certification/Operator Junction table
@@ -85,7 +85,7 @@ CREATE TABLE OPERATOR_CERTIFICATION(
     CONSTRAINT OperatorCertificationFKCertification FOREIGN KEY (Certification_id)
         REFERENCES CERTIFICATION(Certification_id)
             ON UPDATE CASCADE
-            ON DELETE CASCADE
+            ON DELETE no action
 );
 
 -- Create Production Machine
@@ -129,7 +129,7 @@ CREATE TABLE SERVICE_HISTORY(
             ON DELETE NO ACTION,
     CONSTRAINT ServiceFKEmployee FOREIGN KEY (Employee_ID)
         REFERENCES  EMPLOYEE(EmployeeID)
-            ON UPDATE NO ACTION
+            ON UPDATE no action
             ON DELETE NO ACTION,
     CONSTRAINT ResolutionStatusValidation CHECK
         (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
@@ -151,7 +151,7 @@ CREATE TABLE SPECIAL_SERVICE_HISTORY(
             ON DELETE NO ACTION,
     CONSTRAINT SpecialServiceFKEmployee FOREIGN KEY (Employee_ID)
         REFERENCES  EMPLOYEE(EmployeeID)
-            ON UPDATE NO ACTION
+            ON UPDATE no action
             ON DELETE NO ACTION,
     CONSTRAINT SpecialServiceResolutionStatusValidation CHECK
         (Resolution_Status IN ('In progress','Resolved','Awaiting Service Worker','Blocked'))
@@ -169,11 +169,11 @@ CREATE TABLE PRODUCTION_MACHINE_OPERATOR (
     CONSTRAINT PRODUCTION_MACHINE_OPERATORCPK PRIMARY KEY (Shift_Date,Machine_id,Employee_id),
     CONSTRAINT PRODUCTION_MACHINE_OPERATORFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
-            ON UPDATE NO ACTION
+            ON UPDATE cascade
             ON DELETE NO ACTION,
     CONSTRAINT PRODUCTION_MACHINE_OPERATORFKEmployee FOREIGN KEY (Employee_id)
         REFERENCES EMPLOYEE (EmployeeID)
-            ON UPDATE NO ACTION
+            ON UPDATE no action
             ON DELETE NO ACTION,
     CONSTRAINT ShiftEndAfterStartValidation CHECK (Shift_End > Shift_Date)
 );
@@ -201,11 +201,11 @@ CREATE TABLE COMPONENTS_IN_PRODUCT(
     CONSTRAINT COMPONENTS_IN_PRODUCTFKProduct1 FOREIGN KEY (Assembly_Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
+            ON UPDATE cascade ,
     CONSTRAINT COMPONENTS_IN_PRODUCTFKProduct2 FOREIGN KEY (Component_Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+            ON UPDATE no action 
 );
 
 -- Product/Machine Junction Tables
@@ -217,12 +217,12 @@ CREATE TABLE PRODUCTION_MACHINE_PRODUCT (
     CONSTRAINT PRODUCTION_MACHINE_PRODUCTCPK PRIMARY KEY (Machine_id,Product_Number),
     CONSTRAINT PRODUCTION_MACHINE_PRODUCTFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
-            ON UPDATE NO ACTION
-            ON DELETE CASCADE,
+            ON UPDATE cascade
+            ON DELETE no action ,
     CONSTRAINT PRODUCTION_MACHINE_PRODUCTFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
-            ON UPDATE NO ACTION
-            ON DELETE CASCADE
+            ON UPDATE cascade
+            ON DELETE no action
 );
 
 CREATE TABLE PRODUCTION_PROCESS (
@@ -238,11 +238,11 @@ CREATE TABLE PRODUCTION_PROCESS (
     CONSTRAINT ProductionProcessFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
+            ON UPDATE cascade ,
     CONSTRAINT ProductionProcessFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+            ON UPDATE cascade
 );
 
 CREATE TABLE PRODUCT_INSTANCE (
@@ -255,9 +255,9 @@ CREATE TABLE PRODUCT_INSTANCE (
     CONSTRAINT ProductInstanceFKProduct FOREIGN KEY (Product_Number)
         REFERENCES PRODUCT (Product_Number)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
+            ON UPDATE cascade ,
     CONSTRAINT ProductInstanceFKMachine FOREIGN KEY (Machine_id)
         REFERENCES PRODUCTION_MACHINE (Machine_id)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+            ON UPDATE cascade
 );
