@@ -62,6 +62,13 @@ CREATE TABLE OPERATOR (
             ON DELETE cascade
 );
 
+CREATE TABLE CERTIFICATION_DATES(
+    Date_awarded DATE,
+    Expiry_Date AS DATEADD(YEAR, 2, Date_awarded),
+
+    CONSTRAINT PRIMARY KEY (Date_awarded)
+);
+
 -- Create and Alter Certification table and Certification/Operator Junction table
 
 CREATE TABLE CERTIFICATION (
@@ -74,7 +81,6 @@ CREATE TABLE OPERATOR_CERTIFICATION(
     Employee_id int NOT NULL,
     Certification_id int NOT NULL,
     Date_awarded DATE,
-    Expiry_Date AS DATEADD(YEAR, 2, Date_awarded),
 
     CONSTRAINT OperatorCertificationPK PRIMARY KEY (Employee_id,Certification_id),
     CONSTRAINT OperatorCertificationFKEmployee FOREIGN KEY (Employee_id)
@@ -83,6 +89,10 @@ CREATE TABLE OPERATOR_CERTIFICATION(
         ON DELETE CASCADE,
     CONSTRAINT OperatorCertificationFKCertification FOREIGN KEY (Certification_id)
         REFERENCES CERTIFICATION(Certification_id)
+            ON UPDATE CASCADE
+            ON DELETE no action,
+    CONSTRAINT OperatorCertificationFKAwardDates FOREIGN KEY (Date_awarded)
+        REFERENCES CERTIFICATION_DATES (Date_awarded)
             ON UPDATE CASCADE
             ON DELETE no action
 );
@@ -196,7 +206,7 @@ CREATE TABLE PRODUCT (
     CONSTRAINT ProductPriceFK FOREIGN KEY (Production_cost)
         references PRODUCT_PRICE (Production_Cost)
             ON UPDATE CASCADE
-            ON DELETE NO ACTION 
+            ON DELETE NO ACTION
 );
 
 -- Components in product many-to-many table
