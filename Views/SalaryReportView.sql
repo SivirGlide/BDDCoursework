@@ -3,7 +3,6 @@ SELECT
     EmployeeID,
     DepartmentName,
     Salary,
-    MonthlySalary,
     StartDate,
     EndDate
 FROM
@@ -24,7 +23,7 @@ SELECT
     e.EmployeeID,
     e.DepartmentName,
     e.Salary,
-    e.MonthlySalary,
+    (e.Salary / 12) AS MonthlySalary,
     (e.Salary / 52) AS WeeklySalary,
     (e.Salary / 4) AS QuarterlySalary,
     e.StartDate,
