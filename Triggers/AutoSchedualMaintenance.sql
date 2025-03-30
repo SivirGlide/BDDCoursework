@@ -3,7 +3,6 @@ ON PRODUCTION_MACHINE
 AFTER UPDATE
 AS
 BEGIN
-    -- Only proceed if Last_Maintenance_Date was updated AND the machine is not new
     IF UPDATE(Last_Maintenance_Date)
     BEGIN
         -- Update Next_Scheduled_Maintenance to be 72 hours after Last_Maintenance_Date

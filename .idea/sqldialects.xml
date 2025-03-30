@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/ClaudeTestData.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/CreateDB.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Database-Creator.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/DatabaseQuerying.sql" dialect="TSQL" />
@@ -21,8 +20,7 @@
     <file url="file://$PROJECT_DIR$/Views/MaintenanceIssueView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Views/OperatorShiftsView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Views/SalaryReportView.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/data/DataInsertion.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/testdata.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/data/ClaudeTestData.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/../../tutorials/QueryPractice/CapeCoddCDB.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/../../tutorials/QueryPractice/CapeCoddDataInsert.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/../../tutorials/QueryPractice/CapeCoddQuerys.sql" dialect="TSQL" />

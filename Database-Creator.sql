@@ -140,7 +140,7 @@ CREATE TABLE SPECIAL_SERVICE_HISTORY(
     Machine_ID int NOT NULL,
     Employee_ID int NULL,
     --This MIGHT cause an error where 2 machines cant go into service on the same date, check back later...
-    Date_Of_Service DATE UNIQUE NOT NULL default getDate(),
+    Date_Of_Service DATE NOT NULL default getDate(),
     Service_Notes varchar(max) NULL,
     Resolution_Status Varchar(255) NOT NULL
 
@@ -183,11 +183,17 @@ CREATE TABLE PRODUCTION_MACHINE_OPERATOR (
 CREATE TABLE PRODUCT (
     Product_Number int identity(1,1),
     Description varchar(max) NULL,
+
+    CONSTRAINT ProductPK PRIMARY KEY (Product_Number),
+);
+
+--
+CREATE TABLE PRODUCT_PRICE(
     Production_Cost numeric(19,2) NOT NULL,
     -- PERSISTED Keyword stored the value instead of generating on query, takes up storage for faster querying
     Sale_Price AS (Production_Cost * 1.45) PERSISTED
 
-    CONSTRAINT ProductPK PRIMARY KEY (Product_Number),
+    CONSTRAINT PRICEPK PRIMARY KEY (Production_Cost)
 );
 
 -- Components in product many-to-many table

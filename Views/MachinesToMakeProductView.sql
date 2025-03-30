@@ -1,6 +1,5 @@
 
 Create view ProductsMadeByMachines as
--- Query to find all machines that have produced Flywheel, Clutch plate, or Pressure plate in the past 3 days
 SELECT
     PM.Machine_id,
     PM.Machine_Type,

@@ -1,6 +1,6 @@
 -- Master setup script to initialize the entire database
 
---Drop the original database
+--Drop the original database if it exists. (mainly for me to reset the db)
 DROP DATABASE LSBU_Manufacturing;
 
 PRINT 'Starting database setup...';
@@ -55,11 +55,11 @@ GO
 GO
 :r Procedures/DepartmentSalaryReport.sql
 GO
--- Optional: Load test data
+
+-- Test data
 PRINT 'Loading test data...';
 GO
-:r ClaudeTestData.sql
--- LOAD THE TEST DATA HERE
+:r data/ClaudeTestData.sql
 
 PRINT 'Database setup complete!';
 
