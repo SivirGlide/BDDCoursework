@@ -177,22 +177,26 @@ CREATE TABLE PRODUCTION_MACHINE_OPERATOR (
     CONSTRAINT ShiftEndAfterStartValidation CHECK (Shift_End > Shift_Date)
 );
 
--- Create Product
-
-CREATE TABLE PRODUCT (
-    Product_Number int identity(1,1),
-    Description varchar(max) NULL,
-
-    CONSTRAINT ProductPK PRIMARY KEY (Product_Number),
-);
-
---
+-- Create product prices
 CREATE TABLE PRODUCT_PRICE(
     Production_Cost numeric(19,2) NOT NULL,
     -- PERSISTED Keyword stored the value instead of generating on query, takes up storage for faster querying
     Sale_Price AS (Production_Cost * 1.45) PERSISTED
 
     CONSTRAINT PRICEPK PRIMARY KEY (Production_Cost)
+);
+
+-- Create Product
+
+CREATE TABLE PRODUCT (
+    Product_Number int identity(1,1),
+    Description varchar(max) NULL,
+    Production_cost numeric (19,2) NOT NULL
+    CONSTRAINT ProductPK PRIMARY KEY (Product_Number),
+    CONSTRAINT ProductPriceFK FOREIGN KEY (Production_cost)
+        references PRODUCT_PRICE (Production_Cost)
+            ON UPDATE CASCADE
+            ON DELETE NO ACTION 
 );
 
 -- Components in product many-to-many table

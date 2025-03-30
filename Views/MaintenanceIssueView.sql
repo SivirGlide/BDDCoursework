@@ -18,6 +18,7 @@ AS
     Begin
         Select *
         from FrequentlyServicedMachinesView v
+
         WHERE
         (SELECT COUNT(*) FROM SERVICE_HISTORY WHERE Machine_ID = v.Machine_id) +
         (SELECT COUNT(*) FROM SPECIAL_SERVICE_HISTORY WHERE Machine_ID = v.Machine_id) >= @AmountOfRecords;
