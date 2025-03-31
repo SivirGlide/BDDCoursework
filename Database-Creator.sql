@@ -10,15 +10,13 @@ CREATE TABLE EMPLOYEE (
     EmployeeID int NOT NULL IDENTITY(1,1),
     ManagerID int NULL,
     Salary NUMERIC(19,2) NOT NULL,
-    DepartmentName VARCHAR(255) default 'Unassigned',
+    DepartmentName VARCHAR(255) null,
     StartDate DATE NOT NULL DEFAULT GETDATE(),
     EndDate DATE NULL --default assumes still employed
     CONSTRAINT EmployeePK PRIMARY KEY(EmployeeID)
 );
 
 -- Add foreign keys to Department and Employee Tables
-
-
 
 ALTER TABLE DEPARTMENT
 ADD CONSTRAINT ManagerFKEmployee FOREIGN KEY (ManagerID)
@@ -66,7 +64,7 @@ CREATE TABLE CERTIFICATION_DATES(
     Date_awarded DATE,
     Expiry_Date AS DATEADD(YEAR, 2, Date_awarded),
 
-    CONSTRAINT PRIMARY KEY (Date_awarded)
+    CONSTRAINT CertDatePK PRIMARY KEY (Date_awarded)
 );
 
 -- Create and Alter Certification table and Certification/Operator Junction table

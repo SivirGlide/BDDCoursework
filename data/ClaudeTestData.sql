@@ -1,511 +1,611 @@
--- Insert initial employees (without department assignment)
--- We need to insert at least one employee first to establish managers
-SET IDENTITY_INSERT EMPLOYEE ON;
-INSERT INTO EMPLOYEE (EmployeeID, ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, NULL, 120000.00, NULL, '2021-01-15', NULL); -- CEO (no manager)
-SET IDENTITY_INSERT EMPLOYEE OFF;
+-- Manufacturing Database Insert Statements
+-- Note: This script handles the circular dependency between DEPARTMENT and EMPLOYEE
+-- and respects all triggers, especially for salary constraints and department employee counts
 
--- Now we can insert departments with the CEO as the manager
-INSERT INTO DEPARTMENT (DepartmentName, ManagerID) VALUES
-('Engineering', 1),
-('Production', 1),
-('Quality Control', 1),
-('Maintenance', 1),
-('Assembly', 1),
-('Research', 1),
-('Administration', 1),
-('Human Resources', 1);
+-- Step 1: Insert initial employees without departments or managers
+-- These will become department managers
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (NULL, 120000.00, NULL, '2020-01-15', NULL), -- ID 1 (Will be Engineering manager)
+    (NULL, 115000.00, NULL, '2019-06-20', NULL), -- ID 2 (Will be Production manager)
+    (NULL, 125000.00, NULL, '2018-03-10', NULL), -- ID 3 (Will be Quality Control manager)
+    (NULL, 130000.00, NULL, '2017-11-05', NULL), -- ID 4 (Will be Maintenance manager)
+    (NULL, 118000.00, NULL, '2021-02-28', NULL); -- ID 5 (Will be Research & Development manager)
 
--- Now insert more employees with department assignments and managers
--- Engineering Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 110000.00, 'Engineering', '2021-03-01', NULL), -- Engineering Manager (ID: 2)
-(2, 95000.00, 'Engineering', '2022-01-10', NULL),  -- Senior Engineer
-(2, 85000.00, 'Engineering', '2022-02-15', NULL),  -- Engineer
-(2, 82000.00, 'Engineering', '2022-06-20', NULL),  -- Engineer
-(2, 82000.00, 'Engineering', '2022-07-11', NULL),  -- Engineer
-(2, 78000.00, 'Engineering', '2023-01-05', NULL);  -- Junior Engineer
+-- Step 2: Create departments with managers from the employees we just created
+INSERT INTO DEPARTMENT (DepartmentName, ManagerID)
+VALUES
+    ('Engineering', 1),
+    ('Production', 2),
+    ('Quality Control', 3),
+    ('Maintenance', 4),
+    ('Research & Development', 5);
 
--- Production Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 105000.00, 'Production', '2021-02-15', NULL),  -- Production Manager (ID: 8)
-(8, 82000.00, 'Production', '2022-02-01', NULL),   -- Production Lead
-(8, 72000.00, 'Production', '2022-03-10', NULL),   -- Production Specialist
-(8, 71000.00, 'Production', '2022-05-05', NULL),   -- Production Specialist
-(8, 70000.00, 'Production', '2022-09-10', NULL),   -- Production Specialist
-(8, 68000.00, 'Production', '2023-01-20', NULL);   -- Production Associate
 
--- Quality Control Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 100000.00, 'Quality Control', '2021-04-10', NULL),  -- QC Manager (ID: 14)
-(14, 85000.00, 'Quality Control', '2021-11-15', NULL),  -- QC Lead
-(14, 75000.00, 'Quality Control', '2022-01-25', NULL),  -- QC Specialist
-(14, 72000.00, 'Quality Control', '2022-03-01', NULL),  -- QC Technician
-(14, 71000.00, 'Quality Control', '2022-08-15', NULL),  -- QC Technician
-(14, 70000.00, 'Quality Control', '2023-02-10', NULL);  -- QC Associate
+-- Step 4: Insert remaining employees with departments and managers
+-- To satisfy the department employee count trigger (minimum 3 employees per department)
+-- Engineering Department (at least 2 more for total of 3)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (1, 95000.00, 'Engineering', '2021-04-12', NULL),           -- ID 6
+    (1, 92000.00, 'Engineering', '2021-07-20', NULL),           -- ID 7
+    (1, 90000.00, 'Engineering', '2022-01-10', NULL),           -- ID 8
+    (1, 87500.00, 'Engineering', '2022-05-15', NULL),           -- ID 9
+    (1, 85000.00, 'Engineering', '2023-02-01', '2024-08-15');   -- ID 10
 
--- Maintenance Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 102000.00, 'Maintenance', '2021-03-20', NULL),  -- Maintenance Manager (ID: 20)
-(20, 88000.00, 'Maintenance', '2021-09-05', NULL),  -- Maintenance Lead
-(20, 78000.00, 'Maintenance', '2022-01-15', NULL),  -- Maintenance Technician
-(20, 76000.00, 'Maintenance', '2022-04-12', NULL),  -- Maintenance Technician
-(20, 75000.00, 'Maintenance', '2022-06-01', NULL),  -- Maintenance Technician
-(20, 72000.00, 'Maintenance', '2023-01-10', NULL);  -- Maintenance Associate
+-- Production Department (at least 2 more for total of 3)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (2, 85000.00, 'Production', '2020-09-05', NULL),            -- ID 11
+    (2, 82000.00, 'Production', '2021-03-15', NULL),            -- ID 12
+    (2, 80000.00, 'Production', '2022-02-10', NULL),            -- ID 13
+    (2, 78000.00, 'Production', '2022-11-10', '2024-06-30'),    -- ID 14
+    (2, 77000.00, 'Production', '2023-04-01', NULL);            -- ID 15
 
--- Assembly Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 98000.00, 'Assembly', '2021-05-01', NULL),    -- Assembly Manager (ID: 26)
-(26, 82000.00, 'Assembly', '2021-10-15', NULL),   -- Assembly Lead
-(26, 72000.00, 'Assembly', '2022-02-01', NULL),   -- Assembly Specialist
-(26, 70000.00, 'Assembly', '2022-04-20', NULL),   -- Assembly Technician
-(26, 68000.00, 'Assembly', '2022-07-10', NULL),   -- Assembly Technician
-(26, 65000.00, 'Assembly', '2023-01-15', NULL);   -- Assembly Associate
+-- Quality Control Department (at least 2 more for total of 3)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (3, 88000.00, 'Quality Control', '2019-10-10', NULL),          -- ID 16
+    (3, 86000.00, 'Quality Control', '2020-05-12', NULL),          -- ID 17
+    (3, 84000.00, 'Quality Control', '2021-08-01', NULL),          -- ID 18
+    (3, 82000.00, 'Quality Control', '2022-03-15', '2024-04-28'),  -- ID 19
+    (3, 80000.00, 'Quality Control', '2023-01-20', NULL);          -- ID 20
 
--- Research Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 108000.00, 'Research', '2021-04-01', NULL),   -- Research Manager (ID: 32)
-(32, 92000.00, 'Research', '2021-11-01', NULL),   -- Research Lead
-(32, 88000.00, 'Research', '2022-01-05', NULL),   -- Senior Researcher
-(32, 82000.00, 'Research', '2022-03-15', NULL),   -- Researcher
-(32, 78000.00, 'Research', '2022-06-15', NULL),   -- Junior Researcher
-(32, 75000.00, 'Research', '2022-09-20', NULL);   -- Research Assistant
+-- Maintenance Department (at least 2 more for total of 3)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (4, 90000.00, 'Maintenance', '2018-12-05', NULL),            -- ID 21
+    (4, 87500.00, 'Maintenance', '2019-08-10', NULL),            -- ID 22
+    (4, 85000.00, 'Maintenance', '2020-06-15', NULL),            -- ID 23
+    (4, 82500.00, 'Maintenance', '2021-11-20', '2024-03-15'),    -- ID 24
+    (4, 80000.00, 'Maintenance', '2022-09-01', NULL);            -- ID 25
 
--- Administration Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 95000.00, 'Administration', '2021-02-01', NULL), -- Admin Manager (ID: 38)
-(38, 80000.00, 'Administration', '2021-08-10', NULL), -- Admin Lead
-(38, 70000.00, 'Administration', '2022-01-15', NULL), -- Admin Specialist
-(38, 65000.00, 'Administration', '2022-04-10', NULL), -- Admin Assistant
-(38, 62000.00, 'Administration', '2022-07-01', NULL), -- Admin Assistant
-(38, 60000.00, 'Administration', '2022-10-15', NULL); -- Admin Clerk
+-- Research & Development Department (at least 2 more for total of 3)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (5, 98000.00, 'Research & Development', '2021-05-10', NULL),           -- ID 26
+    (5, 95000.00, 'Research & Development', '2022-01-15', NULL),           -- ID 27
+    (5, 93000.00, 'Research & Development', '2022-07-01', NULL),           -- ID 28
+    (5, 90000.00, 'Research & Development', '2023-03-15', '2024-09-30'),   -- ID 29
+    (5, 88000.00, 'Research & Development', '2023-10-01', NULL);           -- ID 30
 
--- Human Resources Department (Manager + minimum 3 employees = 4 total)
-INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate) VALUES
-(1, 100000.00, 'Human Resources', '2021-02-05', NULL), -- HR Manager (ID: 44)
-(44, 85000.00, 'Human Resources', '2021-09-01', NULL), -- HR Lead
-(44, 75000.00, 'Human Resources', '2022-01-10', NULL), -- HR Specialist
-(44, 68000.00, 'Human Resources', '2022-03-01', NULL), -- HR Assistant
-(44, 65000.00, 'Human Resources', '2022-06-15', NULL), -- HR Coordinator
-(44, 62000.00, 'Human Resources', '2022-09-05', NULL); -- HR Clerk
 
--- Union table
-INSERT INTO UNIONTABLE (Name) VALUES
-('Manufacturing Workers Union'),
-('Maintenance Workers Union'),
-('Technical Workers Union'),
-('Administrative Workers Union');
+    -- Step 3: Update the managers with their department assignments
+UPDATE EMPLOYEE
+SET DepartmentName = 'Engineering'
+WHERE EmployeeID = 1;
 
--- Operator (assign union membership to production employees)
-INSERT INTO OPERATOR (EmployeeID, UnionID) VALUES
-(9, 1),  -- Production employees to Manufacturing Workers Union
-(10, 1),
-(11, 1),
-(12, 1),
-(13, 1),
-(21, 2), -- Maintenance employees to Maintenance Workers Union
-(22, 2),
-(23, 2),
-(24, 2),
-(25, 2),
-(27, 1), -- Assembly employees to Manufacturing Workers Union
-(28, 1),
-(29, 1),
-(30, 1),
-(31, 1),
-(3, 3),  -- Engineers to Technical Workers Union
-(4, 3),
-(5, 3),
-(6, 3),
-(7, 3),
-(39, 4), -- Admin employees to Administrative Workers Union
-(40, 4),
-(41, 4),
-(42, 4),
-(43, 4);
+UPDATE EMPLOYEE
+SET DepartmentName = 'Production'
+WHERE EmployeeID = 2;
 
--- Certification table
-INSERT INTO CERTIFICATION (Name) VALUES
-('Machine Operation Level 1'),
-('Machine Operation Level 2'),
-('Machine Operation Level 3'),
-('Maintenance Level 1'),
-('Maintenance Level 2'),
-('Quality Control'),
-('Safety Procedures'),
-('Assembly Specialist'),
-('Welding'),
-('CNC Operation');
+UPDATE EMPLOYEE
+SET DepartmentName = 'Quality Control'
+WHERE EmployeeID = 3;
 
--- Operator Certification
-INSERT INTO OPERATOR_CERTIFICATION (Employee_id, Certification_id, Date_awarded) VALUES
--- Production employees
-(9, 1, '2022-03-15'),
-(9, 2, '2022-06-20'),
-(9, 7, '2022-04-10'),
-(10, 1, '2022-04-05'),
-(10, 7, '2022-04-10'),
-(11, 1, '2022-05-20'),
-(11, 7, '2022-05-25'),
-(12, 1, '2022-10-15'),
-(12, 7, '2022-10-20'),
-(13, 1, '2023-02-10'),
-(13, 7, '2023-02-15'),
+UPDATE EMPLOYEE
+SET DepartmentName = 'Maintenance'
+WHERE EmployeeID = 4;
 
--- Maintenance employees
-(21, 4, '2021-10-15'),
-(21, 5, '2022-01-20'),
-(21, 7, '2021-10-20'),
-(22, 4, '2022-02-25'),
-(22, 7, '2022-03-05'),
-(23, 4, '2022-05-10'),
-(23, 7, '2022-05-15'),
-(24, 4, '2022-07-01'),
-(24, 7, '2022-07-10'),
-(25, 4, '2023-02-05'),
-(25, 7, '2023-02-10'),
+UPDATE EMPLOYEE
+SET DepartmentName = 'Research & Development'
+WHERE EmployeeID = 5;
+-- Step 5: Insert unions
+INSERT INTO UNIONTABLE (Name)
+VALUES
+    ('Manufacturing Workers Alliance'),
+    ('Technical Professionals Guild'),
+    ('Maintenance Workers Association'),
+    ('Quality Assurance Union'),
+    ('Engineering Collective');
 
--- Assembly employees
-(27, 8, '2021-11-20'),
-(27, 9, '2022-02-15'),
-(27, 7, '2021-11-25'),
-(28, 8, '2022-03-10'),
-(28, 7, '2022-03-15'),
-(29, 8, '2022-05-25'),
-(29, 7, '2022-06-01'),
-(30, 8, '2022-08-10'),
-(30, 7, '2022-08-15'),
-(31, 8, '2023-02-20'),
-(31, 7, '2023-02-25');
+-- Step 6: Insert operators (linking employees to unions)
+-- Note: Typically operators would be production employees, but could be from other departments too
+INSERT INTO OPERATOR (EmployeeID, UnionID)
+VALUES
+    (6, 5),   -- Engineering employee in Engineering Collective
+    (7, 5),   -- Engineering employee in Engineering Collective
+    (8, 5),   -- Engineering employee in Engineering Collective
+    (11, 1),  -- Production employee in Manufacturing Workers Alliance
+    (12, 1),  -- Production employee in Manufacturing Workers Alliance
+    (13, 1),  -- Production employee in Manufacturing Workers Alliance
+    (14, 1),  -- Production employee in Manufacturing Workers Alliance
+    (15, 1),  -- Production employee in Manufacturing Workers Alliance
+    (16, 4),  -- Quality Control employee in Quality Assurance Union
+    (18, 4),  -- Quality Control employee in Quality Assurance Union
+    (21, 3),  -- Maintenance employee in Maintenance Workers Association
+    (22, 3),  -- Maintenance employee in Maintenance Workers Association
+    (23, 3),  -- Maintenance employee in Maintenance Workers Association
+    (26, 2),  -- R&D employee in Technical Professionals Guild
+    (27, 2);  -- R&D employee in Technical Professionals Guild
 
--- Production Machines
-INSERT INTO PRODUCTION_MACHINE (Department_name, Machine_Type, Purchase_Date, Is_Automatic, Maintenance_Status, Last_Maintenance_Date, Is_New) VALUES
--- Engineering Department Machines
-('Engineering', 'CNC Mill', '2021-06-10', 1, 'Operational', '2024-01-15', 0),
-('Engineering', 'CNC Lathe', '2021-07-15', 1, 'Operational', '2024-02-10', 0),
-('Engineering', '3D Printer', '2022-01-20', 1, 'Operational', '2024-01-25', 0),
-('Engineering', 'Laser Cutter', '2022-03-05', 1, 'Operational', '2024-02-20', 0),
+-- Step 7: Insert certification dates
+INSERT INTO CERTIFICATION_DATES (Date_awarded)
+VALUES
+    ('2023-01-15'),
+    ('2023-03-20'),
+    ('2023-05-10'),
+    ('2023-07-22'),
+    ('2023-09-05'),
+    ('2023-11-18'),
+    ('2024-01-08'),
+    ('2024-02-15'),
+    ('2024-03-22'),
+    ('2024-05-03'),
+    ('2024-06-14'),
+    ('2024-07-25'),
+    ('2024-09-09');
 
--- Production Department Machines
-('Production', 'Assembly Line A', '2021-05-10', 1, 'Operational', '2024-01-05', 0),
-('Production', 'Assembly Line B', '2021-08-20', 1, 'Operational', '2024-01-12', 0),
-('Production', 'Injection Molder', '2022-02-15', 1, 'Operational', '2024-02-05', 0),
-('Production', 'Extruder', '2022-04-10', 1, 'Operational', '2024-02-15', 0),
+-- Step 8: Insert certifications
+INSERT INTO CERTIFICATION (Name)
+VALUES
+    ('CNC Machine Operation Level 1'),
+    ('CNC Machine Operation Level 2'),
+    ('Industrial Robotic Systems'),
+    ('Precision Milling'),
+    ('Quality Control Systems'),
+    ('Safety Protocol Management'),
+    ('Maintenance Engineering'),
+    ('Production Planning'),
+    ('Materials Handling'),
+    ('Hydraulic Systems'),
+    ('CAD/CAM Engineering'),
+    ('PLC Programming'),
+    ('Welding Certification');
 
--- Quality Control Department Machines
-('Quality Control', 'Material Tester', '2021-09-15', 1, 'Operational', '2024-01-18', 0),
-('Quality Control', 'Optical Inspector', '2022-01-10', 1, 'Operational', '2024-01-28', 0),
-('Quality Control', 'X-Ray Machine', '2022-03-25', 1, 'Operational', '2024-02-12', 0),
-('Quality Control', 'CMM Machine', '2022-05-05', 1, 'Operational', '2024-02-25', 0),
+-- Step 9: Insert operator certifications
+INSERT INTO OPERATOR_CERTIFICATION (Employee_id, Certification_id, Date_awarded)
+VALUES
+    (6, 11, '2023-05-10'),  -- Engineering: CAD/CAM Engineering
+    (6, 12, '2024-02-15'),  -- Engineering: PLC Programming
+    (7, 11, '2023-11-18'),  -- Engineering: CAD/CAM Engineering
+    (8, 12, '2024-05-03'),  -- Engineering: PLC Programming
 
--- Maintenance Department Machines
-('Maintenance', 'Diagnostic System', '2021-10-10', 0, 'Operational', '2024-01-08', 0),
-('Maintenance', 'Calibration Equipment', '2022-01-15', 0, 'Operational', '2024-01-20', 0),
-('Maintenance', 'Parts Cleaner', '2022-04-05', 0, 'Operational', '2024-02-08', 0),
-('Maintenance', 'Welder', '2022-06-20', 0, 'Operational', '2024-02-18', 0),
+    (11, 1, '2023-03-20'),  -- Production: CNC Machine Operation Level 1
+    (11, 2, '2024-03-22'),  -- Production: CNC Machine Operation Level 2
+    (12, 1, '2023-07-22'),  -- Production: CNC Machine Operation Level 1
+    (13, 3, '2024-06-14'),  -- Production: Industrial Robotic Systems
+    (14, 8, '2023-09-05'),  -- Production: Production Planning
+    (15, 9, '2024-07-25'),  -- Production: Materials Handling
 
--- Assembly Department Machines
-('Assembly', 'Robotic Arm A', '2021-11-05', 1, 'Operational', '2024-01-10', 0),
-('Assembly', 'Robotic Arm B', '2022-01-25', 1, 'Operational', '2024-01-22', 0),
-('Assembly', 'Conveyor System', '2022-03-15', 1, 'Operational', '2024-02-05', 0),
-('Assembly', 'Packaging Machine', '2022-05-10', 1, 'Operational', '2024-02-22', 0),
+    (16, 5, '2023-03-20'),  -- Quality Control: Quality Control Systems
+    (18, 5, '2024-01-08'),  -- Quality Control: Quality Control Systems
 
--- Research Department Machines
-('Research', 'Test Chamber', '2021-12-10', 1, 'Operational', '2024-01-12', 0),
-('Research', 'Spectroscope', '2022-02-05', 0, 'Operational', '2024-01-28', 0),
-('Research', 'Thermal Analyzer', '2022-04-15', 0, 'Operational', '2024-02-10', 0),
-('Research', 'Centrifuge', '2022-06-05', 0, 'Operational', '2024-02-20', 0),
+    (21, 7, '2023-05-10'),  -- Maintenance: Maintenance Engineering
+    (22, 10, '2023-11-18'), -- Maintenance: Hydraulic Systems
+    (23, 7, '2024-02-15'),  -- Maintenance: Maintenance Engineering
 
--- Administration Department Machines
-('Administration', 'Document Scanner', '2021-08-15', 0, 'Operational', '2024-01-05', 0),
-('Administration', 'Printer System', '2022-01-05', 0, 'Operational', '2024-01-15', 0),
-('Administration', 'Binding Machine', '2022-03-10', 0, 'Operational', '2024-02-02', 0),
-('Administration', 'Shredder', '2022-05-20', 0, 'Operational', '2024-02-15', 0);
+    (26, 13, '2023-01-15'), -- R&D: Welding Certification
+    (27, 6, '2024-09-09');  -- R&D: Safety Protocol Management
 
--- Service History (30 entries spanning 2024-2025)
-INSERT INTO SERVICE_HISTORY (Machine_ID, Employee_ID, Date_Of_Service, Service_Notes, Resolution_Status) VALUES
-(1, 21, '2024-01-15 09:30:00', 'Regular maintenance - replaced worn parts', 'Resolved'),
-(2, 22, '2024-02-10 10:15:00', 'Oil change and calibration', 'Resolved'),
-(3, 21, '2024-01-25 11:00:00', 'Firmware update and nozzle cleaning', 'Resolved'),
-(4, 23, '2024-02-20 13:45:00', 'Lens cleaning and alignment', 'Resolved'),
-(5, 21, '2024-01-05 08:30:00', 'Belt replacement and lubrication', 'Resolved'),
-(6, 22, '2024-01-12 14:00:00', 'Sensor calibration and testing', 'Resolved'),
-(7, 23, '2024-02-05 09:45:00', 'Nozzle replacement and cleaning', 'Resolved'),
-(8, 24, '2024-02-15 10:30:00', 'Die cleaning and lubrication', 'Resolved'),
-(9, 21, '2024-01-18 11:15:00', 'Calibration and software update', 'Resolved'),
-(10, 22, '2024-01-28 13:00:00', 'Camera cleaning and alignment', 'Resolved'),
-(11, 23, '2024-02-12 14:30:00', 'Tube replacement and calibration', 'Resolved'),
-(12, 24, '2024-02-25 09:00:00', 'Probe calibration and software update', 'Resolved'),
-(13, 21, '2024-01-08 10:45:00', 'Software update and testing', 'Resolved'),
-(14, 22, '2024-01-20 11:30:00', 'Reference standard verification', 'Resolved'),
-(15, 23, '2024-02-08 13:15:00', 'Filter replacement and cleaning', 'Resolved'),
-(16, 24, '2024-02-18 14:45:00', 'Wire feed mechanism maintenance', 'Resolved'),
-(17, 21, '2024-01-10 08:00:00', 'Joint lubrication and calibration', 'Resolved'),
-(18, 22, '2024-01-22 09:15:00', 'Motor replacement and testing', 'Resolved'),
-(19, 23, '2024-02-05 10:00:00', 'Belt tensioning and lubrication', 'Resolved'),
-(20, 24, '2024-02-22 11:45:00', 'Sensor cleaning and calibration', 'Resolved'),
-(21, 21, '2024-01-12 13:30:00', 'Seal replacement and pressure test', 'Resolved'),
-(22, 22, '2024-01-28 14:15:00', 'Optics cleaning and alignment', 'Resolved'),
-(23, 23, '2024-02-10 08:45:00', 'Temperature sensor calibration', 'Resolved'),
-(24, 24, '2024-02-20 09:30:00', 'Rotor balancing and bearing inspection', 'Resolved'),
-(25, 21, '2024-01-05 10:15:00', 'Glass cleaning and roller maintenance', 'Resolved'),
-(26, 22, '2024-01-15 11:00:00', 'Cartridge replacement and alignment', 'Resolved'),
-(27, 23, '2024-02-02 13:45:00', 'Drive replacement and testing', 'Resolved'),
-(28, 24, '2024-02-15 14:30:00', 'Blade sharpening and lubrication', 'Resolved'),
-(1, 21, '2024-03-15 09:00:00', 'Regular quarterly maintenance', 'Resolved'),
-(2, 22, '2024-03-17 10:30:00', 'Quarterly oil change and calibration', 'Resolved');
+-- Step 10: Insert production machines
+INSERT INTO PRODUCTION_MACHINE (Department_name, Machine_Type, Purchase_Date, Is_Automatic, Maintenance_Status, Last_Maintenance_Date, Next_Scheduled_Maintenance, Is_New)
+VALUES
+    ('Production', 'CNC Milling Machine', '2020-05-15', 1, 'Operational', '2024-02-10', '2024-02-13', 0),
+    ('Production', 'CNC Lathe', '2021-03-20', 1, 'Operational', '2024-01-22', '2024-01-25', 0),
+    ('Production', 'Industrial Robot', '2022-07-10', 1, 'Operational', '2024-03-05', '2024-03-08', 0),
+    ('Production', 'Injection Molding Machine', '2019-11-28', 1, 'In service', '2024-04-15', NULL, 0),
+    ('Production', '3D Printer (Industrial)', '2023-01-05', 1, 'Operational', '2024-05-20', '2024-05-23', 0),
 
--- Special Service History (fewer entries - for major repairs)
-INSERT INTO SPECIAL_SERVICE_HISTORY (Machine_ID, Employee_ID, Date_Of_Service, Service_Notes, Resolution_Status) VALUES
-(3, 21, '2024-01-10', 'Major extruder assembly replacement', 'Resolved'),
-(7, 22, '2024-01-20', 'Mold system overhaul', 'Resolved'),
-(11, 23, '2024-01-30', 'X-ray tube replacement', 'Resolved'),
-(15, 24, '2024-02-07', 'Complete system disassembly and cleaning', 'Resolved'),
-(19, 21, '2024-02-14', 'Arm joint rebuild', 'Resolved'),
-(23, 22, '2024-02-21', 'Heating element replacement', 'Resolved'),
-(27, 23, '2024-02-28', 'Drive system replacement', 'Resolved'),
-(2, 24, '2024-03-05', 'Spindle replacement and alignment', 'Resolved'),
-(6, 21, '2024-03-12', 'Conveyor system rebuild', 'Resolved'),
-(10, 22, '2024-03-19', 'Camera array replacement', 'Resolved');
+    ('Engineering', 'Precision Laser Cutter', '2022-03-17', 1, 'Operational', '2024-02-18', '2024-02-21', 0),
+    ('Engineering', 'Prototype 3D Printer', '2023-05-10', 1, 'Operational', '2024-04-08', '2024-04-11', 0),
+    ('Engineering', 'Test Jig Assembly', '2021-09-22', 0, 'Operational', '2024-01-15', '2024-01-18', 0),
+    ('Engineering', 'Electronic Testing Station', '2022-11-30', 1, 'In service', '2024-06-01', NULL, 0),
 
--- Products
-INSERT INTO PRODUCT (Description, Production_Cost) VALUES
-('Aluminum Bracket', 12.50),
-('Steel Bolt Pack (100)', 8.75),
-('Bearing Assembly', 22.00),
-('Circuit Board - Basic', 45.00),
-('Circuit Board - Advanced', 85.00),
-('Motor - Small', 35.00),
-('Motor - Medium', 65.00),
-('Motor - Large', 120.00),
-('Sensor Package', 55.00),
-('Control Panel', 95.00),
-('Plastic Housing - Small', 15.00),
-('Plastic Housing - Medium', 25.00),
-('Plastic Housing - Large', 40.00),
-('Metal Enclosure - Small', 30.00),
-('Metal Enclosure - Medium', 50.00),
-('Metal Enclosure - Large', 80.00),
-('Wire Harness - Basic', 18.00),
-('Wire Harness - Complex', 32.00),
-('Power Supply - 12V', 42.00),
-('Power Supply - 24V', 58.00),
-('Fan Assembly', 28.00),
-('Cooling System', 75.00),
-('LED Display', 48.00),
-('Touchscreen Panel', 110.00),
-('Rubber Gasket Set', 9.50),
-('Mounting Kit', 14.50),
-('Control Unit - Basic', 120.00),
-('Control Unit - Advanced', 210.00),
-('Automated Assembly Robot', 3500.00),
-('Conveyor System Section', 650.00);
+    ('Quality Control', 'Coordinate Measuring Machine', '2020-08-12', 1, 'Operational', '2024-03-10', '2024-03-13', 0),
+    ('Quality Control', 'Optical Inspection System', '2021-05-25', 1, 'Operational', '2024-05-05', '2024-05-08', 0),
+    ('Quality Control', 'Tensile Testing Machine', '2022-09-15', 0, 'Operational', '2024-01-30', '2024-02-02', 0),
 
--- Components in Product (Bill of Materials)
-INSERT INTO COMPONENTS_IN_PRODUCT (Assembly_Product_Number, Component_Product_Number, Quantity) VALUES
--- Automated Assembly Robot components
-(29, 8, 2),  -- Large Motors
-(29, 5, 1),  -- Advanced Circuit Board
-(29, 10, 1), -- Control Panel
-(29, 16, 1), -- Large Metal Enclosure
-(29, 18, 1), -- Complex Wire Harness
-(29, 20, 1), -- 24V Power Supply
-(29, 22, 1), -- Cooling System
-(29, 24, 1), -- Touchscreen Panel
-(29, 28, 1), -- Advanced Control Unit
+    ('Maintenance', 'Hydraulic Press', '2019-07-08', 0, 'Operational', '2024-02-25', '2024-02-28', 0),
+    ('Maintenance', 'Industrial Tooling System', '2021-02-14', 0, 'Operational', '2024-04-20', '2024-04-23', 0),
+    ('Maintenance', 'Welding Station', '2020-10-30', 0, 'Awaiting service', '2023-12-15', '2023-12-18', 0),
 
--- Conveyor System Section components
-(30, 7, 2),  -- Medium Motors
-(30, 4, 1),  -- Basic Circuit Board
-(30, 15, 1), -- Medium Metal Enclosure
-(30, 17, 1), -- Basic Wire Harness
-(30, 19, 1), -- 12V Power Supply
-(30, 27, 1), -- Basic Control Unit
+    ('Research & Development', 'Material Testing System', '2022-04-05', 1, 'Operational', '2024-03-18', '2024-03-21', 0),
+    ('Research & Development', 'Chemical Analysis Unit', '2023-02-28', 1, 'Operational', '2024-05-12', '2024-05-15', 0),
+    ('Research & Development', 'Prototype Assembly Station', '2021-11-10', 0, 'In special service', '2024-04-30', NULL, 0),
+    ('Research & Development', 'CAD Workstation Cluster', '2022-08-20', 1, 'Operational', '2024-01-05', '2024-01-08', 0),
 
--- Control Unit - Advanced components
-(28, 5, 1),  -- Advanced Circuit Board
-(28, 15, 1), -- Medium Metal Enclosure
-(28, 9, 3),  -- Sensor Packages
-(28, 18, 1), -- Complex Wire Harness
-(28, 20, 1), -- 24V Power Supply
+    ('Production', 'Packaging System', '2020-12-10', 1, 'Operational', '2024-06-05', '2024-06-08', 0),
+    ('Production', 'Assembly Line', '2021-06-30', 1, 'Operational', '2024-05-25', '2024-05-28', 0),
+    ('Engineering', 'Circuit Board Tester', '2022-05-18', 1, 'Awaiting service', '2024-02-05', '2024-02-08', 0),
+    ('Maintenance', 'Diagnostic System', '2023-03-10', 1, 'Operational', '2024-04-12', '2024-04-15', 0),
+    ('Quality Control', 'X-Ray Inspection Unit', '2021-08-15', 1, 'Retired', '2023-11-10', NULL, 0),
+    ('Production', 'Robotic Arm Assembly', '2024-01-15', 1, 'Operational', NULL, NULL, 1);
 
--- Control Unit - Basic components
-(27, 4, 1),  -- Basic Circuit Board
-(27, 14, 1), -- Small Metal Enclosure
-(27, 9, 1),  -- Sensor Package
-(27, 17, 1), -- Basic Wire Harness
-(27, 19, 1), -- 12V Power Supply
+-- Step 11: Insert service histories
+INSERT INTO SERVICE_HISTORY (Machine_ID, Employee_ID, Date_Of_Service, Service_Notes, Resolution_Status)
+VALUES
+    (1, 21, '2024-02-10 09:00:00', 'Regular maintenance performed. Replaced worn bearings and lubricated moving parts.', 'Resolved'),
+    (2, 22, '2024-01-22 10:30:00', 'Calibration completed and tool holders replaced.', 'Resolved'),
+    (3, 23, '2024-03-05 11:15:00', 'Reprogrammed movement sequences and updated firmware.', 'Resolved'),
+    (4, 21, '2024-04-15 13:20:00', 'Hydraulic system repair in progress. Parts ordered.', 'In progress'),
+    (5, 23, '2024-05-20 14:45:00', 'Extruder nozzle replaced and bed leveled.', 'Resolved'),
+    (6, 22, '2024-02-18 08:30:00', 'Lens cleaning and alignment check completed.', 'Resolved'),
+    (7, 23, '2024-04-08 09:45:00', 'Filament feed system maintenance and software update.', 'Resolved'),
+    (8, 21, '2024-01-15 10:10:00', 'Connection terminals tightened and electrical safety check performed.', 'Resolved'),
+    (9, 22, '2024-06-01 11:30:00', 'Circuit board replacement needed. Awaiting parts.', 'In progress'),
+    (10, 23, '2024-03-10 13:15:00', 'Probe calibration and software update completed.', 'Resolved'),
+    (11, 21, '2024-05-05 14:30:00', 'Camera alignment adjusted and lighting system replaced.', 'Resolved'),
+    (12, 22, '2024-01-30 15:45:00', 'Load cell calibration and hydraulic fluid replacement.', 'Resolved'),
+    (13, 23, '2024-02-25 08:15:00', 'Seal replacement and pressure system testing.', 'Resolved'),
+    (14, 21, '2024-04-20 09:30:00', 'Tool holder replacements and alignment check.', 'Resolved'),
+    (15, 22, '2023-12-15 10:45:00', 'Power supply issue identified. Awaiting replacement parts.', 'Awaiting Service Worker'),
+    (16, 23, '2024-03-18 11:00:00', 'Sensor calibration and sample platform adjustment.', 'Resolved'),
+    (17, 21, '2024-05-12 13:45:00', 'Ventilation system cleaned and detection sensors calibrated.', 'Resolved'),
+    (18, 22, '2024-04-30 14:00:00', 'Custom fixture installation and testing. Special parts on order.', 'In progress'),
+    (19, 23, '2024-01-05 15:30:00', 'System cooling maintenance and software update.', 'Resolved'),
+    (20, 21, '2024-06-05 08:45:00', 'Belt replacement and motor adjustment completed.', 'Resolved'),
+    (21, 22, '2024-05-25 09:15:00', 'Conveyor system maintenance and control system firmware update.', 'Resolved'),
+    (22, 23, '2024-02-05 10:20:00', 'Circuit testing system fault. Diagnostic inspection required.', 'Awaiting Service Worker'),
+    (23, 21, '2024-04-12 11:45:00', 'Software update and sensor calibration completed.', 'Resolved'),
+    (24, 22, '2023-11-10 13:30:00', 'Unit reliability issues. Recommended for retirement.', 'Blocked');
 
--- Cooling System components
-(22, 6, 1),  -- Small Motor
-(22, 21, 2), -- Fan Assemblies
-(22, 12, 1), -- Medium Plastic Housing
-(22, 25, 1), -- Rubber Gasket Set
+-- Step 12: Insert special service histories
+INSERT INTO SPECIAL_SERVICE_HISTORY (Machine_ID, Employee_ID, Date_Of_Service, Service_Notes, Resolution_Status)
+VALUES
+    (4, 21, '2024-04-20', 'Complete hydraulic system overhaul required. Extensive disassembly needed.', 'In progress'),
+    (9, 22, '2024-06-05', 'Testing system motherboard replacement and firmware update.', 'In progress'),
+    (15, 23, '2024-01-10', 'Power regulation system failure. Complete electrical overhaul required.', 'Awaiting Service Worker'),
+    (18, 21, '2024-05-05', 'Custom modification for new product line testing. Engineering collaboration required.', 'In progress'),
+    (22, 22, '2024-02-10', 'Testing algorithm failure. Software engineering team involvement required.', 'Blocked');
 
--- Touchscreen Panel components
-(24, 23, 1), -- LED Display
-(24, 4, 1),  -- Basic Circuit Board
-(24, 11, 1), -- Small Plastic Housing
-(24, 17, 1); -- Basic Wire Harness
+-- Step 13: Insert production machine operators (shifts)
+INSERT INTO PRODUCTION_MACHINE_OPERATOR (Shift_Date, Machine_id, Employee_id, Shift_End, Operator_Task)
+VALUES
+    ('2024-01-05 07:00:00', 1, 11, '2024-01-05 15:00:00', 'Production run - Component A-2354'),
+    ('2024-01-05 15:00:00', 1, 12, '2024-01-05 23:00:00', 'Production run - Component A-2354'),
+    ('2024-01-06 07:00:00', 1, 11, '2024-01-06 15:00:00', 'Production run - Component A-2456'),
+    ('2024-01-06 15:00:00', 1, 13, '2024-01-06 23:00:00', 'Production run - Component A-2456'),
 
--- Production Machine Product (which machines can make which products)
-INSERT INTO PRODUCTION_MACHINE_PRODUCT (Machine_id, Product_Number) VALUES
--- Engineering Machines
-(1, 1), -- CNC Mill can make Aluminum Bracket
-(1, 14), -- CNC Mill can make Small Metal Enclosure
-(1, 15), -- CNC Mill can make Medium Metal Enclosure
-(1, 16), -- CNC Mill can make Large Metal Enclosure
-(2, 2), -- CNC Lathe can make Steel Bolt Pack
-(2, 3), -- CNC Lathe can make Bearing Assembly
-(3, 11), -- 3D Printer can make Small Plastic Housing
-(3, 12), -- 3D Printer can make Medium Plastic Housing
-(3, 13), -- 3D Printer can make Large Plastic Housing
-(4, 1), -- Laser Cutter can also make Aluminum Bracket
-(4, 4), -- Laser Cutter can make Basic Circuit Board
-(4, 5), -- Laser Cutter can make Advanced Circuit Board
+    ('2024-01-10 07:00:00', 2, 12, '2024-01-10 15:00:00', 'Production run - Component B-1121'),
+    ('2024-01-10 15:00:00', 2, 14, '2024-01-10 23:00:00', 'Production run - Component B-1121'),
+    ('2024-01-11 07:00:00', 2, 13, '2024-01-11 15:00:00', 'Production run - Component B-1122'),
+    ('2024-01-11 15:00:00', 2, 15, '2024-01-11 23:00:00', 'Production run - Component B-1122'),
 
--- Production Machines
-(5, 17), -- Assembly Line A can make Basic Wire Harness
-(5, 18), -- Assembly Line A can make Complex Wire Harness
-(5, 19), -- Assembly Line A can make 12V Power Supply
-(5, 20), -- Assembly Line A can make 24V Power Supply
-(6, 21), -- Assembly Line B can make Fan Assembly
-(6, 22), -- Assembly Line B can make Cooling System
-(6, 23), -- Assembly Line B can make LED Display
-(6, 24), -- Assembly Line B can make Touchscreen Panel
-(7, 11), -- Injection Molder can make Small Plastic Housing
-(7, 12), -- Injection Molder can make Medium Plastic Housing
-(7, 13), -- Injection Molder can make Large Plastic Housing
-(7, 25), -- Injection Molder can make Rubber Gasket Set
-(8, 1), -- Extruder can make Aluminum Bracket
-(8, 2), -- Extruder can make Steel Bolt Pack
-(8, 26), -- Extruder can make Mounting Kit
+    ('2024-02-05 07:00:00', 3, 11, '2024-02-05 15:00:00', 'Robot assembly line - Product C-550'),
+    ('2024-02-05 15:00:00', 3, 12, '2024-02-05 23:00:00', 'Robot assembly line - Product C-550'),
+    ('2024-02-06 07:00:00', 3, 13, '2024-02-06 15:00:00', 'Robot assembly line - Product C-550'),
+    ('2024-02-06 15:00:00', 3, 14, '2024-02-06 23:00:00', 'Robot assembly line - Product C-550'),
 
--- Assembly Machines
-(17, 6), -- Robotic Arm A can make Small Motor
-(17, 7), -- Robotic Arm A can make Medium Motor
-(17, 8), -- Robotic Arm A can make Large Motor
-(17, 9), -- Robotic Arm A can make Sensor Package
-(17, 10), -- Robotic Arm A can make Control Panel
-(18, 27), -- Robotic Arm B can make Basic Control Unit
-(18, 28), -- Robotic Arm B can make Advanced Control Unit
-(19, 29), -- Conveyor System can make Automated Assembly Robot
-(20, 30); -- Packaging Machine can make Conveyor System Section
+    ('2024-03-12 07:00:00', 5, 15, '2024-03-12 15:00:00', '3D printing - Prototype D-788'),
+    ('2024-03-13 07:00:00', 5, 11, '2024-03-13 15:00:00', '3D printing - Prototype D-788'),
 
--- Production Process
-INSERT INTO PRODUCTION_PROCESS (Product_Number, Machine_id, Sequence_Number, Process_Type, Build_Time_In_Seconds) VALUES
--- Aluminum Bracket Production Process
-(1, 1, 1, 'Milling', 120),
-(1, 4, 2, 'Cutting', 60),
-(1, 8, 3, 'Finishing', 90),
+    ('2024-03-20 07:00:00', 6, 6, '2024-03-20 15:00:00', 'Cutting parts for prototype E-901'),
+    ('2024-03-21 07:00:00', 6, 7, '2024-03-21 15:00:00', 'Cutting parts for prototype E-901'),
 
--- Steel Bolt Pack Production Process
-(2, 2, 1, 'Turning', 180),
-(2, 8, 2, 'Threading', 120),
+    ('2024-04-02 08:00:00', 10, 16, '2024-04-02 16:00:00', 'Quality inspection - Product batch C-550'),
+    ('2024-04-03 08:00:00', 10, 18, '2024-04-03 16:00:00', 'Quality inspection - Product batch C-550'),
 
--- Circuit Board Production Processes
-(4, 4, 1, 'Cutting', 90),
-(4, 5, 2, 'Assembly', 150),
-(5, 4, 1, 'Precision Cutting', 150),
-(5, 5, 2, 'Complex Assembly', 300),
+    ('2024-05-15 07:00:00', 20, 12, '2024-05-15 15:00:00', 'Packaging run - Final product F-233'),
+    ('2024-05-15 15:00:00', 20, 13, '2024-05-15 23:00:00', 'Packaging run - Final product F-233'),
+    ('2024-05-16 07:00:00', 20, 15, '2024-05-16 15:00:00', 'Packaging run - Final product F-233'),
+    ('2024-05-16 15:00:00', 20, 11, '2024-05-16 23:00:00', 'Packaging run - Final product F-233'),
 
--- Motor Production Processes
-(6, 17, 1, 'Assembly', 240),
-(7, 17, 1, 'Assembly', 360),
-(8, 17, 1, 'Assembly', 480),
+    ('2024-06-10 07:00:00', 21, 14, '2024-06-10 15:00:00', 'Assembly line - Product G-340'),
+    ('2024-06-10 15:00:00', 21, 13, '2024-06-10 23:00:00', 'Assembly line - Product G-340');
 
--- Plastic Housing Production Process
-(11, 3, 1, 'Printing', 300),
-(11, 7, 2, 'Molding', 180),
-(12, 3, 1, 'Printing', 420),
-(12, 7, 2, 'Molding', 240),
-(13, 3, 1, 'Printing', 600),
-(13, 7, 2, 'Molding', 360),
+-- Step 14: Insert product prices
+INSERT INTO PRODUCT_PRICE (Production_Cost)
+VALUES
+    (12.75),   -- Sale price will be $18.49
+    (25.50),   -- Sale price will be $36.98
+    (8.30),    -- Sale price will be $12.04
+    (45.20),   -- Sale price will be $65.54
+    (67.80),   -- Sale price will be $98.31
+    (105.25),  -- Sale price will be $152.61
+    (3.15),    -- Sale price will be $4.57
+    (18.90),   -- Sale price will be $27.41
+    (33.45),   -- Sale price will be $48.50
+    (51.60),   -- Sale price will be $74.82
+    (92.75),   -- Sale price will be $134.49
+    (123.40),  -- Sale price will be $178.93
+    (7.55),    -- Sale price will be $10.95
+    (29.30),   -- Sale price will be $42.49
+    (54.85);   -- Sale price will be $79.53
 
--- Control Unit Production Process
-(27, 18, 1, 'Assembly', 420),
-(28, 18, 1, 'Assembly', 600),
+-- Step 15: Insert products
+INSERT INTO PRODUCT (Description, Production_cost)
+VALUES
+    ('Circuit Board Component A', 12.75),         -- ID 1
+    ('Hydraulic Control Unit', 25.50),            -- ID 2
+    ('Plastic Housing Small', 8.30),              -- ID 3
+    ('Metal Chassis Assembly', 45.20),            -- ID 4
+    ('Cooling System Complete', 67.80),           -- ID 5
+    ('Industrial Control System', 105.25),        -- ID 6
+    ('Fastener Kit', 3.15),                       -- ID 7
+    ('Drive Belt Assembly', 18.90),               -- ID 8
+    ('Power Supply Unit', 33.45),                 -- ID 9
+    ('LCD Display Panel', 51.60),                 -- ID 10
+    ('Motor Control Assembly', 92.75),            -- ID 11
+    ('Complete Smart Device', 123.40),            -- ID 12
+    ('Cable Harness', 7.55),                      -- ID 13
+    ('Sensor Array', 29.30),                      -- ID 14
+    ('Interface Module', 54.85);                  -- ID 15
 
--- Advanced Products
-(29, 19, 1, 'Assembly', 1800),
-(30, 20, 1, 'Assembly', 1200);
+-- Step 16: Insert components in products (showing which products are made up of other products)
+INSERT INTO COMPONENTS_IN_PRODUCT (Assembly_Product_Number, Component_Product_Number, Quantity)
+VALUES
+    -- Industrial Control System (ID 6) contains:
+    (6, 1, 3),  -- 3 Circuit Board Components
+    (6, 9, 1),  -- 1 Power Supply Unit
+    (6, 10, 1), -- 1 LCD Display Panel
+    (6, 13, 2), -- 2 Cable Harnesses
+    (6, 14, 2), -- 2 Sensor Arrays
+    (6, 15, 1), -- 1 Interface Module
 
--- Product Instance (30 manufactured products with dates spanning 2024-2025)
-INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time) VALUES
-(1, 1, '2024-01-05 08:30:00'),
-(2, 2, '2024-01-07 09:45:00'),
-(3, 2, '2024-01-10 11:15:00'),
-(4, 4, '2024-01-12 13:30:00'),
-(5, 4, '2024-01-15 15:00:00'),
-(6, 17, '2024-01-18 10:30:00'),
-(7, 17, '2024-01-20 14:00:00'),
-(8, 17, '2024-01-23 11:45:00'),
-(9, 17, '2024-01-25 09:15:00'),
-(10, 17, '2024-01-28 13:30:00'),
-(11, 3, '2024-02-01 10:00:00'),
-(12, 3, '2024-02-03 11:30:00'),
-(13, 3, '2024-02-05 14:45:00'),
-(14, 1, '2024-02-08 09:30:00'),
-(15, 1, '2024-02-10 13:15:00'),
-(16, 1, '2024-02-12 15:45:00'),
-(17, 5, '2024-02-15 10:30:00'),
-(18, 5, '2024-02-18 12:00:00'),
-(19, 5, '2024-02-20 14:30:00'),
-(20, 5, '2024-02-22 16:00:00'),
-(21, 6, '2024-02-25 09:45:00'),
-(22, 6, '2024-02-28 11:15:00'),
-(23, 6, '2024-03-02 13:30:00'),
-(24, 6, '2024-03-05 15:00:00'),
-(25, 7, '2024-03-08 10:45:00'),
-(26, 8, '2024-03-10 12:15:00'),
-(27, 18, '2024-03-13 09:30:00'),
-(28, 18, '2024-03-16 11:45:00'),
-(29, 19, '2024-03-19 14:00:00'),
-(30, 20, '2024-03-22 16:30:00');
+    -- Complete Smart Device (ID 12) contains:
+    (12, 1, 1),  -- 1 Circuit Board Component
+    (12, 3, 2),  -- 2 Plastic Housing Small
+    (12, 7, 1),  -- 1 Fastener Kit
+    (12, 9, 1),  -- 1 Power Supply Unit
+    (12, 10, 1), -- 1 LCD Display Panel
+    (12, 13, 1), -- 1 Cable Harness
+    (12, 14, 1), -- 1 Sensor Array
 
--- Production Machine Operator (shifts for machine operators spanning 2024-2025)
-INSERT INTO PRODUCTION_MACHINE_OPERATOR (Shift_Date, Machine_id, Employee_id, Shift_End, Operator_Task) VALUES
--- January 2024 Shifts
-('2024-01-05 08:00:00', 1, 9, '2024-01-05 16:00:00', 'CNC Mill Operation - Aluminum Brackets'),
-('2024-01-05 08:00:00', 5, 10, '2024-01-05 16:00:00', 'Assembly Line Operation - Wire Harnesses'),
-('2024-01-05 08:00:00', 17, 27, '2024-01-05 16:00:00', 'Robotic Arm Operation - Motor Assembly'),
-('2024-01-07 08:00:00', 2, 9, '2024-01-07 16:00:00', 'CNC Lathe Operation - Bolt Production'),
-('2024-01-07 08:00:00', 6, 10, '2024-01-07 16:00:00', 'Assembly Line Operation - Fan Assembly'),
-('2024-01-07 08:00:00', 18, 27, '2024-01-07 16:00:00', 'Robotic Arm Operation - Control Unit Assembly'),
+    -- Motor Control Assembly (ID 11) contains:
+    (11, 1, 2),  -- 2 Circuit Board Components
+    (11, 2, 1),  -- 1 Hydraulic Control Unit
+    (11, 8, 1),  -- 1 Drive Belt Assembly
+    (11, 9, 1),  -- 1 Power Supply Unit
+    (11, 13, 2), -- 2 Cable Harnesses
 
-('2024-01-10 08:00:00', 3, 11, '2024-01-10 16:00:00', '3D Printer Operation - Plastic Housing'),
-('2024-01-10 08:00:00', 7, 12, '2024-01-10 16:00:00', 'Injection Molder Operation - Gasket Production'),
-('2024-01-10 08:00:00', 19, 28, '2024-01-10 16:00:00', 'Conveyor System Operation - Robot Assembly'),
-('2024-01-15 08:00:00', 4, 11, '2024-01-15 16:00:00', 'Laser Cutter Operation - Circuit Board Cutting'),
-('2024-01-15 08:00:00', 8, 12, '2024-01-15 16:00:00', 'Extruder Operation - Mounting Kit Production'),
-('2024-01-15 08:00:00', 20, 28, '2024-01-15 16:00:00', 'Packaging Machine Operation - Conveyor Assembly'),
+    -- Cooling System Complete (ID 5) contains:
+    (5, 3, 1),   -- 1 Plastic Housing Small
+    (5, 7, 1),   -- 1 Fastener Kit
+    (5, 8, 1),   -- 1 Drive Belt Assembly
+    (5, 13, 1),  -- 1 Cable Harness
 
--- February 2024 Shifts
-('2024-02-05 08:00:00', 1, 9, '2024-02-05 16:00:00', 'CNC Mill Operation - Metal Enclosures'),
-('2024-02-05 08:00:00', 5, 10, '2024-02-05 16:00:00', 'Assembly Line Operation - Power Supplies'),
-('2024-02-05 08:00:00', 17, 27, '2024-02-05 16:00:00', 'Robotic Arm Operation - Sensor Package Assembly'),
-('2024-02-10 08:00:00', 2, 9, '2024-02-10 16:00:00', 'CNC Lathe Operation - Bearing Assembly'),
-('2024-02-10 08:00:00', 6, 10, '2024-02-10 16:00:00', 'Assembly Line Operation - Cooling System Assembly'),
-('2024-02-10 08:00:00', 18, 27, '2024-02-10 16:00:00', 'Robotic Arm Operation - Advanced Control Unit Assembly'),
+    -- Metal Chassis Assembly (ID 4) contains:
+    (4, 3, 2),   -- 2 Plastic Housing Small
+    (4, 7, 2);   -- 2 Fastener Kits
 
-('2024-02-15 08:00:00', 3, 11, '2024-02-15 16:00:00', '3D Printer Operation - Large Plastic Housing'),
-('2024-02-15 08:00:00', 7, 12, '2024-02-15 16:00:00', 'Injection Molder Operation - Custom Parts'),
-('2024-02-15 08:00:00', 19, 28, '2024-02-15 16:00:00', 'Conveyor System Operation - Assembly Robot Testing'),
-('2024-02-20 08:00:00', 4, 11, '2024-02-20 16:00:00', 'Laser Cutter Operation - Advanced Circuit Board'),
-('2024-02-20 08:00:00', 8, 12, '2024-02-20 16:00:00', 'Extruder Operation - Custom Aluminum Parts'),
-('2024-02-20 08:00:00', 20, 28, '2024-02-20 16:00:00', 'Packaging Machine Operation - System Packaging'),
+-- Step 17: Insert production machine products (which machines can produce which products)
+INSERT INTO PRODUCTION_MACHINE_PRODUCT (Machine_id, Product_Number)
+VALUES
+    -- CNC Milling Machine (ID 1) can produce:
+    (1, 2),  -- Hydraulic Control Unit
+    (1, 4),  -- Metal Chassis Assembly
 
--- March 2024 Shifts
-('2024-03-05 08:00:00', 1, 9, '2024-03-05 16:00:00', 'CNC Mill Operation - Custom Metal Parts'),
-('2024-03-05 08:00:00', 5, 10, '2024-03-05 16:00:00', 'Assembly Line Operation - Complex Wire Harnesses'),
-('2024-03-05 08:00:00', 17, 27, '2024-03-05 16:00:00', 'Robotic Arm Operation - Large Motor Assembly'),
-('2024-03-10 08:00:00', 2, 9, '2024-03-10 16:00:00', 'CNC Lathe Operation - Precision Parts'),
-('2024-03-10 08:00:00', 6, 10, '2024-03-10 16:00:00', 'Assembly Line Operation - LED Display Assembly'),
-('2024-03-10 08:00:00', 18, 27, '2024-03-10 16:00:00', 'Robotic Arm Operation - Control Panel Assembly'),
+    -- CNC Lathe (ID 2) can produce:
+    (2, 2),  -- Hydraulic Control Unit
+    (2, 8),  -- Drive Belt Assembly
 
-('2024-03-15 08:00:00', 3, 11, '2024-03-15 16:00:00', '3D Printer Operation - Custom Housing'),
-('2024-03-15 08:00:00', 7, 12, '2024-03-15 16:00:00', 'Injection Molder Operation - Specialized Parts'),
-('2024-03-15 08:00:00', 19, 28, '2024-03-15 16:00:00', 'Conveyor System Operation - Final Assembly'),
-('2024-03-20 08:00:00', 4, 11, '2024-03-20 16:00:00', 'Laser Cutter Operation - Specialty Components'),
-('2024-03-20 08:00:00', 8, 12, '2024-03-20 16:00:00', 'Extruder Operation - Custom Bracket Production'),
-('2024-03-20 08:00:00', 20, 28, '2024-03-20 16:00:00', 'Packaging Machine Operation - Premium Packaging');
+    -- Industrial Robot (ID 3) can produce:
+    (3, 5),  -- Cooling System Complete
+    (3, 6),  -- Industrial Control System
+    (3, 11), -- Motor Control Assembly
+    (3, 12), -- Complete Smart Device
+
+    -- Injection Molding Machine (ID 4) can produce:
+    (4, 3),  -- Plastic Housing Small
+
+    -- 3D Printer (Industrial) (ID 5) can produce:
+    (5, 3),  -- Plastic Housing Small
+    (5, 15), -- Interface Module
+
+    -- Precision Laser Cutter (ID 6) can produce:
+    (6, 1),  -- Circuit Board Component A
+    (6, 13), -- Cable Harness
+
+    -- Prototype 3D Printer (ID 7) can produce:
+    (7, 3),  -- Plastic Housing Small (prototypes)
+    (7, 15), -- Interface Module (prototypes)
+
+    -- Assembly Line (ID 21) can produce:
+    (21, 6),  -- Industrial Control System
+    (21, 11), -- Motor Control Assembly
+    (21, 12), -- Complete Smart Device
+
+    -- Packaging System (ID 20) handles all finished products
+    (20, 5),  -- Cooling System Complete
+    (20, 6),  -- Industrial Control System
+    (20, 11), -- Motor Control Assembly
+    (20, 12); -- Complete Smart Device
+
+-- Step 18: Insert production processes
+INSERT INTO PRODUCTION_PROCESS (Product_Number, Machine_id, Sequence_Number, Process_Type, Build_Time_In_Seconds)
+VALUES
+    -- Circuit Board Component A (ID 1) production process
+    (1, 6, 1, 'Laser Cutting', 120),
+
+    -- Hydraulic Control Unit (ID 2) production process
+    (2, 1, 1, 'Milling', 300),
+    (2, 2, 2, 'Turning', 180),
+
+    -- Plastic Housing Small (ID 3) production process
+    (3, 4, 1, 'Injection Molding', 90),
+
+    -- Metal Chassis Assembly (ID 4) production process
+    (4, 1, 1, 'Milling', 450),
+
+    -- Cooling System Complete (ID 5) production process
+    (5, 3, 1, 'Robotic Assembly', 600),
+
+    -- Industrial Control System (ID 6) production process
+    (6, 3, 1, 'Component Assembly', 480),
+    (6, 21, 2, 'Final Assembly', 600),
+
+    -- Complete Smart Device (ID 12) production process
+    (12, 3, 1, 'Component Placement', 180),
+    (12, 21, 2, 'System Integration', 300),
+    (12, 21, 3, 'Final Assembly', 240),
+
+    -- Motor Control Assembly (ID 11) production process
+    (11, 3, 1, 'Robotic Assembly', 420),
+    (11, 21, 2, 'System Integration', 360),
+
+    -- Interface Module (ID 15) production process
+    (15, 5, 1, '3D Printing', 540);
+
+-- Step 19: Insert product instances (actual products that were manufactured)
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+    -- Circuit Board Component A instances
+    (1, 6, '2024-01-10 09:15:22'),
+    (1, 6, '2024-01-10 09:17:45'),
+    (1, 6, '2024-01-10 09:20:12'),
+    (1, 6, '2024-01-10 13:30:05'),
+    (1, 6, '2024-01-10 13:32:18'),
+    (1, 6, '2024-02-15 10:05:33'),
+    (1, 6, '2024-02-15 10:07:56'),
+    (1, 6, '2024-02-15 14:20:42'),
+    (1, 6, '2024-02-15 14:23:17'),
+    (1, 6, '2024-03-22 11:10:08'),
+
+    -- Hydraulic Control Unit instances
+    (2, 1, '2024-01-15 08:45:30'),
+    (2, 1, '2024-01-15 09:55:12'),
+    (2, 2, '2024-02-20 10:30:25'),
+    (2, 2, '2024-02-20 11:45:18'),
+    (2, 1, '2024-04-10 13:20:05'),
+
+    -- Plastic Housing Small instances
+    (3, 4, '2024-01-20 14:10:40'),
+    (3, 4, '2024-01-20 14:12:15'),
+    (3, 4, '2024-01-20 14:13:50'),
+    (3, 4, '2024-01-20 14:15:25'),
+    (3, 4, '2024-02-25 09:30:22'),
+    (3, 4, '2024-02-25 09:31:57'),
+    (3, 4, '2024-02-25 09:33:32'),
+    (3, 4, '2024-02-25 09:35:07'),
+    (3, 5, '2024-03-15 15:05:10'),
+    (3, 5, '2024-03-15 15:14:15'),
+
+    -- Cooling System Complete instances
+    (5, 3, '2024-02-05 11:20:38'),
+    (5, 3, '2024-02-05 11:31:24'),
+    (5, 3, '2024-04-15 13:45:12'),
+
+    -- Industrial Control System instances
+    (6, 21, '2024-02-10 14:25:55'),
+    (6, 21, '2024-03-20 10:15:30'),
+    (6, 21, '2024-05-05 11:35:45'),
+
+    -- Complete Smart Device instances
+    (12, 21, '2024-03-01 09:50:15'),
+    (12, 21, '2024-03-01 10:10:25'),
+    (12, 21, '2024-05-10 14:30:40'),
+    (12, 21, '2024-05-10 14:50:55'),
+
+    -- Motor Control Assembly instances
+    (11, 21, '2024-02-15 13:20:10'),
+    (11, 21, '2024-02-15 14:05:22'),
+    (11, 21, '2024-04-20 11:15:35'),
+    (11, 21, '2024-04-20 12:00:48'),
+
+    -- Interface Module instances
+    (15, 5, '2024-03-25 10:40:20'),
+    (15, 5, '2024-03-25 10:49:45'),
+    (15, 5, '2024-05-15 15:25:30'),
+    (15, 5, '2024-05-15 15:34:55');
+
+-- Adding 3 more employees to each department with end dates in 2024
+-- Engineering Department (additional employees with end dates)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (1, 83000.00, 'Engineering', '2023-11-15', '2024-07-22'),           -- ID 31
+    (1, 82000.00, 'Engineering', '2024-01-08', '2024-10-15'),           -- ID 32
+    (1, 81500.00, 'Engineering', '2023-08-20', '2024-05-05');           -- ID 33
+
+-- Production Department (additional employees with end dates)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (2, 76500.00, 'Production', '2023-09-12', '2024-03-30'),            -- ID 34
+    (2, 75800.00, 'Production', '2023-10-01', '2024-08-18'),            -- ID 35
+    (2, 75000.00, 'Production', '2024-02-15', '2024-11-30');            -- ID 36
+
+-- Quality Control Department (additional employees with end dates)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (3, 79500.00, 'Quality Control', '2023-12-05', '2024-09-15'),       -- ID 37
+    (3, 78800.00, 'Quality Control', '2023-07-15', '2024-04-10'),       -- ID 38
+    (3, 78000.00, 'Quality Control', '2024-01-20', '2024-10-25');       -- ID 39
+
+-- Maintenance Department (additional employees with end dates)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (4, 79000.00, 'Maintenance', '2023-08-10', '2024-02-28'),           -- ID 40
+    (4, 78500.00, 'Maintenance', '2023-10-22', '2024-06-15'),           -- ID 41
+    (4, 77800.00, 'Maintenance', '2024-03-01', '2024-12-15');           -- ID 42
+
+-- Research & Development Department (additional employees with end dates)
+INSERT INTO EMPLOYEE (ManagerID, Salary, DepartmentName, StartDate, EndDate)
+VALUES
+    (5, 87000.00, 'Research & Development', '2023-11-10', '2024-05-15'), -- ID 43
+    (5, 86200.00, 'Research & Development', '2023-09-25', '2024-07-31'), -- ID 44
+    (5, 85500.00, 'Research & Development', '2024-02-05', '2024-11-20'); -- ID 45
+
+-- Update some existing employees to have start dates in 2024
+-- Note: These are employees that previously had earlier start dates
+UPDATE EMPLOYEE
+SET StartDate = '2024-01-10', EndDate = '2024-09-30'
+WHERE EmployeeID = 9;
+
+UPDATE EMPLOYEE
+SET StartDate = '2024-02-20', EndDate = '2024-12-15'
+WHERE EmployeeID = 15;
+
+UPDATE EMPLOYEE
+SET StartDate = '2024-03-05'
+WHERE EmployeeID = 20;
+
+UPDATE EMPLOYEE
+SET StartDate = '2024-01-15', EndDate = '2024-10-31'
+WHERE EmployeeID = 25;
+
+UPDATE EMPLOYEE
+SET StartDate = '2024-02-10', EndDate = '2024-11-15'
+WHERE EmployeeID = 28;
+
+-- Update a random selection of employees to start between April and September 2024
+-- While ensuring startDate < EndDate
+
+-- Employee #7 (Engineering)
+UPDATE EMPLOYEE
+SET StartDate = '2024-04-15'
+WHERE EmployeeID = 7;
+
+-- Employee #13 (Production)
+UPDATE EMPLOYEE
+SET StartDate = '2024-05-20'
+WHERE EmployeeID = 13;
+
+-- Employee #18 (Quality Control)
+UPDATE EMPLOYEE
+SET StartDate = '2024-06-05'
+WHERE EmployeeID = 18;
+
+-- Employee #23 (Maintenance)
+UPDATE EMPLOYEE
+SET StartDate = '2024-07-12'
+WHERE EmployeeID = 23;
+
+-- Employee #27 (Research & Development)
+UPDATE EMPLOYEE
+SET StartDate = '2024-08-08'
+WHERE EmployeeID = 27;
+
+-- Employee #32 (Engineering - one of the new employees)
+UPDATE EMPLOYEE
+SET StartDate = '2024-06-18', EndDate = '2024-12-15'
+WHERE EmployeeID = 32;
+
+-- Employee #36 (Production - one of the new employees)
+UPDATE EMPLOYEE
+SET StartDate = '2024-04-25'
+WHERE EmployeeID = 36;
+
+-- Employee #39 (Quality Control - one of the new employees)
+UPDATE EMPLOYEE
+SET StartDate = '2024-05-10'
+WHERE EmployeeID = 39;
+
+-- Employee #42 (Maintenance - one of the new employees)
+UPDATE EMPLOYEE
+SET StartDate = '2024-07-01'
+WHERE EmployeeID = 42;
+
+-- Employee #45 (Research & Development - one of the new employees)
+UPDATE EMPLOYEE
+SET StartDate = '2024-09-05', EndDate = '2024-12-20'
+WHERE EmployeeID = 45;
