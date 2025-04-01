@@ -61,5 +61,12 @@ PRINT 'Loading test data...';
 GO
 :r data/ClaudeTestData.sql
 
+GO
+PRINT 'Adding Tableau Views'
+GO
+:r Tableau/DepartmentSalaryView.sql
+GO
+:r Tableau/ProductDetails.sql
+GO
 PRINT 'Database setup complete!';
 
