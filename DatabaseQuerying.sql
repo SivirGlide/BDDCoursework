@@ -23,9 +23,7 @@ EXECUTE FindMachinesWithHighMaintenanceRecords 2;
 
 --Manager cannot have pay lower than employee.
 EXECUTE ManagerPaysMore 99998, 99999;
---Employee Cannot have pay lower than manager.
-Execute ManagerPaysMore 100000, 1000000;
 
 -- Question 4E
 
-Execute DepartmentSalaryReport'month', 10, 2025
+Execute DepartmentSalaryReport'Week', 4, 2024;

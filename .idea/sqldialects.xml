@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/Procedures/DepartmentSalaryReport.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Procedures/ManagerPaysMoreProof.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Procedures/OperatorShiftsProcedure.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Tableau/DepartmentSalaryView.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/AutoSchedualMaintenance.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/ManagerEmployeePay.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Triggers/MinimumEmployeesInDepartment.sql" dialect="TSQL" />

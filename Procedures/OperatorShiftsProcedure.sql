@@ -35,5 +35,3 @@ as
         GROUP BY Employee_id
         HAVING COUNT(Shift_Date) = @maximumshifts
     end;
-
-

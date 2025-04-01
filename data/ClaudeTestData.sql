@@ -609,3 +609,94 @@ WHERE EmployeeID = 42;
 UPDATE EMPLOYEE
 SET StartDate = '2024-09-05', EndDate = '2024-12-20'
 WHERE EmployeeID = 45;
+
+-- Add the specific clutch-related products
+INSERT INTO PRODUCT_PRICE (Production_Cost)
+VALUES
+    (35.45),  -- Flywheel cost
+    (22.80),  -- Clutch plate cost
+    (40.60);  -- Pressure plate cost
+
+-- Insert the three specific products mentioned in the query
+INSERT INTO PRODUCT (Description, Production_cost)
+VALUES
+    ('Flywheel', 35.45),         -- ID 16
+    ('Clutch plate', 22.80),     -- ID 17
+    ('Pressure plate', 40.60);   -- ID 18
+
+-- Assign machines that can produce these parts
+INSERT INTO PRODUCTION_MACHINE_PRODUCT (Machine_id, Product_Number)
+VALUES
+    -- CNC Milling Machine (ID 1) can produce flywheels
+    (1, 16),  -- Flywheel
+
+    -- CNC Lathe (ID 2) can produce all three parts
+    (2, 16),  -- Flywheel
+    (2, 17),  -- Clutch plate
+    (2, 18),  -- Pressure plate
+
+    -- Industrial Robot (ID 3) can produce pressure plates
+    (3, 18);  -- Pressure plate
+
+-- Define production processes for these parts
+INSERT INTO PRODUCTION_PROCESS (Product_Number, Machine_id, Sequence_Number, Process_Type, Build_Time_In_Seconds)
+VALUES
+    -- Flywheel production process
+    (16, 1, 1, 'Milling', 480),
+    (16, 2, 1, 'Turning', 420),
+
+    -- Clutch plate production process
+    (17, 2, 1, 'Turning', 300),
+
+    -- Pressure plate production process
+    (18, 2, 1, 'Turning', 360),
+    (18, 3, 1, 'Assembly', 240);
+
+-- Insert product instances for the last 3 days (assuming today is March 31, 2025)
+-- March 29, 2025
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+    -- Flywheel instances (March 29)
+    (16, 1, '2025-03-29 08:15:22'),
+    (16, 1, '2025-03-29 09:20:45'),
+    (16, 2, '2025-03-29 10:30:18'),
+
+    -- Clutch plate instances (March 29)
+    (17, 2, '2025-03-29 11:45:33'),
+    (17, 2, '2025-03-29 13:10:27'),
+
+    -- Pressure plate instances (March 29)
+    (18, 2, '2025-03-29 14:25:55'),
+    (18, 3, '2025-03-29 15:40:12');
+
+-- March 30, 2025
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+    -- Flywheel instances (March 30)
+    (16, 1, '2025-03-30 08:30:10'),
+    (16, 2, '2025-03-30 09:45:25'),
+
+    -- Clutch plate instances (March 30)
+    (17, 2, '2025-03-30 11:15:40'),
+    (17, 2, '2025-03-30 13:35:18'),
+    (17, 2, '2025-03-30 14:50:32'),
+
+    -- Pressure plate instances (March 30)
+    (18, 3, '2025-03-30 15:20:47'),
+    (18, 3, '2025-03-30 16:35:59');
+
+-- March 31, 2025 (today)
+INSERT INTO PRODUCT_INSTANCE (Product_Number, Machine_id, Manufacture_Date_Time)
+VALUES
+    -- Flywheel instances (March 31)
+    (16, 1, '2025-03-31 08:10:15'),
+    (16, 1, '2025-03-31 09:25:33'),
+    (16, 2, '2025-03-31 10:40:22'),
+
+    -- Clutch plate instances (March 31)
+    (17, 2, '2025-03-31 11:30:45'),
+    (17, 2, '2025-03-31 13:45:12'),
+
+    -- Pressure plate instances (March 31)
+    (18, 2, '2025-03-31 15:05:30'),
+    (18, 3, '2025-03-31 16:20:18');
